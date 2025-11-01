@@ -18,7 +18,7 @@ public interface IinvoiceService {
      * @param account InvoiceDTO
      * @return boolean success
      */
-    public boolean createInvoice(InvoiceDTO account);
+    public InvoiceDTO createInvoice(InvoiceDTO account);
 
     /**
      * Get Invoice by ID
@@ -41,7 +41,7 @@ public interface IinvoiceService {
      * @param account InvoiceDTO
      * @return boolean success
      */
-    public boolean updateInvoice(InvoiceDTO account);
+    public InvoiceDTO updateInvoice(InvoiceDTO account);
 
     /**
      * Delete Invoice by ID

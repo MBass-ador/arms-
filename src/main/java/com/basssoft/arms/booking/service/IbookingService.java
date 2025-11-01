@@ -13,7 +13,7 @@ public interface IbookingService {
      * @param booking BookingDTO
      * @return boolean success
      */
-    public boolean createBooking(BookingDTO booking);
+    public BookingDTO createBooking(BookingDTO booking);
 
     /**
      * Get Booking by ID
@@ -36,7 +36,7 @@ public interface IbookingService {
      * @param booking BookingDTO
      * @return boolean success
      */
-    public boolean updateBooking(BookingDTO booking);
+    public BookingDTO updateBooking(BookingDTO booking);
 
     /**
      * Delete Booking by ID

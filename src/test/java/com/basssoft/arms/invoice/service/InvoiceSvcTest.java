@@ -1,11 +1,12 @@
 package com.basssoft.arms.invoice.service;
 
+import com.basssoft.arms.account.domain.AccountDTO;
 import com.basssoft.arms.invoice.domain.InvoiceDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for {@link InvoiceSvcImpl}
@@ -33,8 +34,9 @@ public class InvoiceSvcTest {
     public void testCreateInvoice() {
 
         InvoiceDTO invoiceDTO = new InvoiceDTO();
-        boolean result = service.createInvoice(invoiceDTO);
-        assertTrue(result);
+        InvoiceDTO result = service.createInvoice(invoiceDTO);
+        assertNotNull(result);
+        assertNotNull(result.getInvoiceId());
     }
     
     /**
@@ -64,8 +66,8 @@ public class InvoiceSvcTest {
     public void testUpdateInvoice() {
 
         InvoiceDTO invoiceDTO = new InvoiceDTO();
-        boolean result = service.updateInvoice(invoiceDTO);
-        assertTrue(result);
+        InvoiceDTO result = service.updateInvoice(invoiceDTO);
+        assertEquals(result, invoiceDTO);
     }
     
     /**

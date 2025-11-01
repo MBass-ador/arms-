@@ -21,7 +21,7 @@ public interface IaccountService {
      * @param account AccountDTO
      * @return boolean success
      */
-    public boolean createAccount(AccountDTO account);
+    public AccountDTO createAccount(AccountDTO account);
 
     /**
      * Get Account by ID
@@ -42,9 +42,9 @@ public interface IaccountService {
      * Update existing Account
      *
      * @param account AccountDTO
-     * @return boolean success
+     * @return AccountDTO updated
      */
-    public boolean updateAccount(AccountDTO account);
+    public AccountDTO updateAccount(AccountDTO account);
 
     /**
      * Delete Account by ID

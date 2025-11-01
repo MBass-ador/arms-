@@ -17,8 +17,8 @@ public class InvoiceDTO {
 
     private int invoiceId;
 
-    private String providerId;
-    private String customerId;
+    private int providerId;
+    private int customerId;
 
     private List<Booking> bookings;
 

@@ -14,7 +14,7 @@ import java.util.List;
  * @version 1.0
  */
 @Service
-public class InvoiceSvcImpl {
+public class InvoiceSvcImpl implements IinvoiceService {
 
 
 
@@ -24,9 +24,13 @@ public class InvoiceSvcImpl {
      * @param account InvoiceDTO
      * @return boolean success (default true right now)
      */
-    public boolean createInvoice(InvoiceDTO account) {
+    public InvoiceDTO createInvoice(InvoiceDTO account) {
 
-        return true;
+        InvoiceDTO created = new InvoiceDTO();
+
+        created.setInvoiceId(1);
+
+        return created;
     }
 
 
@@ -61,9 +65,12 @@ public class InvoiceSvcImpl {
      * @param account InvoiceDTO
      * @return boolean success
      */
-    public boolean updateInvoice(InvoiceDTO account) {
+    public InvoiceDTO updateInvoice(InvoiceDTO account) {
 
-        return true;
+        InvoiceDTO updated = new InvoiceDTO();
+        updated.setInvoiceId(account.getInvoiceId());
+
+        return updated;
     }
 
 

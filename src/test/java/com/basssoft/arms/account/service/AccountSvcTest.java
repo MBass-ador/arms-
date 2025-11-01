@@ -31,8 +31,9 @@ public class AccountSvcTest {
     @Test
     public void testCreateAccount() {
         AccountDTO accountDTO = new AccountDTO();
-        boolean result = service.createAccount(accountDTO);
-        assertTrue(result);
+        AccountDTO result = service.createAccount(accountDTO);
+        assertNotNull(result);
+        assertNotNull(result.getAccountId());
     }
 
 
@@ -60,8 +61,8 @@ public class AccountSvcTest {
     @Test
     public void testUpdateAccount() {
         AccountDTO accountDTO = new AccountDTO();
-        boolean result = service.updateAccount(accountDTO);
-        assertTrue(result);
+        AccountDTO result = service.updateAccount(accountDTO);
+        assertEquals(result, accountDTO);
     }
 
 

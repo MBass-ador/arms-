@@ -15,7 +15,7 @@ import java.util.List;
  * @version 1.0
  */
 @Service
-public class AccountSvcImpl {
+public class AccountSvcImpl implements IaccountService {
 
 
 
@@ -25,9 +25,13 @@ public class AccountSvcImpl {
      * @param account AccountDTO
      * @return boolean success (default true right now)
      */
-    public boolean createAccount(AccountDTO account){
+    public AccountDTO createAccount(AccountDTO account){
 
-        return true;
+        AccountDTO created = new AccountDTO();
+
+        created.setAccountId(1);
+
+        return created;
     }
 
 
@@ -59,11 +63,14 @@ public class AccountSvcImpl {
      * Update existing Account
 
      * @param account AccountDTO
-     * @return boolean success (default true right now)
+     * @return AccountDTO updated account
      */
-    public boolean updateAccount(AccountDTO account) {
+    public AccountDTO updateAccount(AccountDTO account) {
 
-        return true;
+        AccountDTO updated = new AccountDTO();
+        updated.setAccountId(account.getAccountId());
+
+        return updated;
     }
 
 

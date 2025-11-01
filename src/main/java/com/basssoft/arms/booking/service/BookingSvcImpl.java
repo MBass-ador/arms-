@@ -1,5 +1,6 @@
 package com.basssoft.arms.booking.service;
 
+import com.basssoft.arms.account.domain.AccountDTO;
 import com.basssoft.arms.booking.domain.Booking;
 import com.basssoft.arms.booking.domain.BookingDTO;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ import java.util.List;
  * @version 1.0
  */
 @Service
-public class BookingSvcImpl {
+public class BookingSvcImpl implements IbookingService {
 
 
     /**
@@ -22,9 +23,13 @@ public class BookingSvcImpl {
      * @param booking BookingDTO
      * @return boolean success (default true right now)
      */
-    public boolean createBooking(BookingDTO booking) {
+    public BookingDTO createBooking(BookingDTO booking) {
 
-        return true;
+        BookingDTO created = new BookingDTO();
+
+        created.setBookingId(1);
+
+        return created;
     }
 
 
@@ -59,9 +64,12 @@ public class BookingSvcImpl {
      * @param booking BookingDTO
      * @return boolean success (default true right now)
      */
-    public boolean updateBooking(BookingDTO booking) {
+    public BookingDTO updateBooking(BookingDTO booking) {
 
-        return true;
+        BookingDTO updated = new BookingDTO();
+        updated.setBookingId(booking.getBookingId());
+
+        return updated;
     }
 
 

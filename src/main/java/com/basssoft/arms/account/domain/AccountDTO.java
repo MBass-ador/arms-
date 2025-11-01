@@ -1,6 +1,8 @@
 package com.basssoft.arms.account.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Data Transfer Object
@@ -11,6 +13,8 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AccountDTO {
 
     private int accountId;

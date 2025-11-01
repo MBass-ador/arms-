@@ -1,5 +1,6 @@
 package com.basssoft.arms.booking.service;
 
+import com.basssoft.arms.account.domain.AccountDTO;
 import com.basssoft.arms.booking.domain.Booking;
 import com.basssoft.arms.booking.domain.BookingDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +32,9 @@ public class BookingSvcTest {
     @Test
     public void testCreateBooking() {
         BookingDTO bookingDTO = new BookingDTO();
-        boolean result = service.createBooking(bookingDTO);
-        assertTrue(result);
+        BookingDTO result = service.createBooking(bookingDTO);
+        assertNotNull(result);
+        assertNotNull(result.getBookingId());
     }
 
 
@@ -62,8 +64,8 @@ public class BookingSvcTest {
     @Test
     public void testUpdateBooking() {
         BookingDTO bookingDTO = new BookingDTO();
-        boolean result = service.updateBooking(bookingDTO);
-        assertTrue(result);
+        BookingDTO result = service.updateBooking(bookingDTO);
+        assertEquals(result, bookingDTO);
     }
 
 
