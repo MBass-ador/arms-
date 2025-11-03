@@ -5,6 +5,13 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 import com.basssoft.arms.account.service.AccountSvcTest;
 
+/**
+ * test suite to run all account-related tests
+ *
+ * arms application
+ * @author Matthew Bass
+ * @version 1.0
+ */
 @Suite
 @SelectClasses({
         AccountSvcTest.class,

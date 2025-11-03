@@ -1,18 +1,14 @@
 package com.basssoft.arms.booking.service;
 
-import com.basssoft.arms.account.domain.AccountDTO;
-import com.basssoft.arms.booking.domain.Booking;
 import com.basssoft.arms.booking.domain.BookingDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for {@link BookingSvcImpl}
- *
+
  * arms application
  * @author Matthew Bass
  * @version 1.0
@@ -21,6 +17,9 @@ public class BookingSvcTest {
 
     private BookingSvcImpl service;
 
+    /**
+     * sets up the test environment before each test
+     */
     @BeforeEach
     public void setUp() {
         service = new BookingSvcImpl();
@@ -53,7 +52,7 @@ public class BookingSvcTest {
      */
     @Test
     public void testGetAllBookings() {
-        List<Booking> bookings = service.getAllBookings();
+        List<BookingDTO> bookings = service.getAllBookings();
         assertNotNull(bookings);
     }
 
@@ -74,8 +73,8 @@ public class BookingSvcTest {
      */
     @Test
     public void testDeleteBooking() {
-        boolean result = service.deleteBooking(1);
-        assertTrue(result);
+        int result = service.deleteBooking(1);
+        assertEquals(1, result);
     }
 
 }

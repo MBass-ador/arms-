@@ -1,6 +1,5 @@
 package com.basssoft.arms.account.service;
 
-import com.basssoft.arms.account.domain.Account;
 import com.basssoft.arms.account.domain.AccountDTO;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -23,15 +22,11 @@ public class AccountSvcImpl implements IaccountService {
      * Create new Account
 
      * @param account AccountDTO
-     * @return boolean success (default true right now)
+     * @return AccountDTO created account
      */
     public AccountDTO createAccount(AccountDTO account){
 
-        AccountDTO created = new AccountDTO();
-
-        created.setAccountId(1);
-
-        return created;
+        return account;
     }
 
 
@@ -39,21 +34,23 @@ public class AccountSvcImpl implements IaccountService {
      * Get Account by ID
 
      * @param accountId int
-     * @return AccountDTO (empty right now)
+     * @return AccountDTO (just id right now)
      */
     public AccountDTO getAccount(int accountId) {
 
-        return new AccountDTO();
+        AccountDTO created = new AccountDTO();
+        created.setAccountId(accountId);
+        return created;
     }
 
     /**
      * Get all Accounts
 
-     * @return List<Account> (empty right now)
+     * @return List<AccountDTO> (empty list right now)
      */
-    public List<Account> getAllAccounts() {
+    public List<AccountDTO> getAllAccounts() {
 
-        List<Account> accounts = new ArrayList<>();
+        List<AccountDTO> accounts = new ArrayList<>();
 
         return accounts;
     }
@@ -67,10 +64,7 @@ public class AccountSvcImpl implements IaccountService {
      */
     public AccountDTO updateAccount(AccountDTO account) {
 
-        AccountDTO updated = new AccountDTO();
-        updated.setAccountId(account.getAccountId());
-
-        return updated;
+        return account;
     }
 
 
@@ -78,11 +72,11 @@ public class AccountSvcImpl implements IaccountService {
      * Delete Account by ID
 
      * @param accountId int
-     * @return boolean success (default true right now)
+     * @return int deletedAccountId
      */
-    public boolean deleteAccount(int accountId) {
+    public int deleteAccount(int accountId) {
 
-        return true;
+        return accountId;
     }
 
 }

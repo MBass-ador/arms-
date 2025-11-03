@@ -10,11 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,18 +29,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @version 1.0
  */
 @WebMvcTest(BookingController.class)
+@Import(BookingControllerTest.TestConfig.class)
 public class BookingControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    static IbookingService bookingService = Mockito.mock(IbookingService.class);
+    @Autowired
+    private IbookingService bookingService;
+
+    @Autowired
+    private BookingModelAssembler bookingModelAssembler;
 
     @TestConfiguration
     static class TestConfig {
         @Bean
         IbookingService bookingService() {
-            return bookingService;
+            return Mockito.mock(IbookingService.class);
+        }
+        @Bean
+        BookingModelAssembler bookingModelAssembler() {
+            return Mockito.mock(BookingModelAssembler.class);
         }
     }
 
@@ -82,6 +94,16 @@ public class BookingControllerTest {
                 }
             }
         """;
+
+        Mockito.when(bookingModelAssembler.toModel(Mockito.any(BookingDTO.class)))
+                .thenAnswer(invocation ->
+                        EntityModel.of(
+                                invocation.getArgument(0),
+                                linkTo(methodOn(BookingController.class)
+                                        .getBooking(1))
+                                        .withSelfRel()
+                        )
+                );
     }
 
     /**
@@ -104,7 +126,55 @@ public class BookingControllerTest {
 
                 .andExpect(jsonPath("$.customer.accountId").value(20))
                 .andExpect(jsonPath("$.customer.screenName").value("customerUser"))
-                .andExpect(jsonPath("$.customer.email").value("customer@email.com"));
+                .andExpect(jsonPath("$.customer.email").value("customer@email.com"))
+                .andExpect(jsonPath("$._links.self.href").exists());
+    }
+
+    /**
+     * Tests @Link com.basssoft.arms.booking.controller.BookingController#getBooking:success
+     */
+    @Test
+    void testGetBooking_Success() throws Exception {
+
+        Mockito.when(bookingService.getBooking(1)).thenReturn(bookingDto);
+
+        mockMvc.perform(get("/bookings/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.bookingId").value(1))
+                .andExpect(jsonPath("$.provider.accountId").value(10))
+                .andExpect(jsonPath("$.customer.accountId").value(20));
+    }
+
+
+    /**
+     * Tests @Link com.basssoft.arms.booking.controller.BookingController#getBooking:bookingNotFound
+     */
+    @Test
+    void testGetBooking_NotFound() throws Exception {
+
+        Mockito.when(bookingService.getBooking(99)).thenReturn(null);
+
+        mockMvc.perform(get("/bookings/99"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$").value("Booking not found."));
+    }
+
+    /**
+     * Tests @Link com.basssoft.arms.booking.controller.BookingController#getBookings
+     */
+    @Test
+    void testGetBookings() throws Exception {
+
+        List<BookingDTO> bookings = List.of(bookingDto);
+
+        Mockito.when(bookingService.getAllBookings()).thenReturn(bookings);
+
+        mockMvc.perform(get("/bookings"))
+                .andExpect(jsonPath("$._embedded.bookingDTOList[0].bookingId").value(1))
+                .andExpect(jsonPath("$._embedded.bookingDTOList[0].provider.accountId").value(10))
+                .andExpect(jsonPath("$._embedded.bookingDTOList[0].customer.accountId").value(20))
+                .andExpect(jsonPath("$._embedded.bookingDTOList[0]._links.self.href").exists())
+                .andExpect(jsonPath("$._links.self.href").exists());
     }
 
 
@@ -122,7 +192,8 @@ public class BookingControllerTest {
                         .content(bookingJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.provider.accountId").value(10))
-                .andExpect(jsonPath("$.customer.accountId").value(20));
+                .andExpect(jsonPath("$.customer.accountId").value(20))
+                .andExpect(jsonPath("$._links.self.href").exists());
     }
 
 
@@ -143,5 +214,30 @@ public class BookingControllerTest {
     }
 
 
+    /**
+     * Tests @Link com.basssoft.arms.booking.controller.BookingController#deleteBooking:success
+     */
+    @Test
+    void testDeleteBooking_Success() throws Exception {
+
+        Mockito.when(bookingService.deleteBooking(1)).thenReturn(1);
+
+        mockMvc.perform(delete("/bookings/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("Booking deleted successfully."));
+    }
+
+    /**
+     * Tests @Link com.basssoft.arms.booking.controller.BookingController#deleteBooking:bookingNotFound
+     */
+    @Test
+    void testDeleteBooking_NotFound() throws Exception {
+
+        Mockito.when(bookingService.deleteBooking(99)).thenReturn(-1);
+
+        mockMvc.perform(delete("/bookings/99"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$").value("Booking not found."));
+    }
 
 }

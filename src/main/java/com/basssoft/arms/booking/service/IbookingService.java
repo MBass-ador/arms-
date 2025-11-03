@@ -1,17 +1,21 @@
 package com.basssoft.arms.booking.service;
 
-import com.basssoft.arms.booking.domain.Booking;
 import com.basssoft.arms.booking.domain.BookingDTO;
-
 import java.util.List;
 
+/** * Booking Service Interface
+
+ * arms application
+ * @author Matthew Bass
+ * @version 1.0
+ */
 public interface IbookingService {
 
     /**
      * Create new Booking
      *
      * @param booking BookingDTO
-     * @return boolean success
+     * @return BookingDTO
      */
     public BookingDTO createBooking(BookingDTO booking);
 
@@ -26,15 +30,15 @@ public interface IbookingService {
     /**
      * Get all Bookings
      *
-     * @return List<Booking>
+     * @return List<BookingDTO>
      */
-    public List<Booking> getAllBookings();
+    public List<BookingDTO> getAllBookings();
 
     /**
      * Update existing Booking
      *
      * @param booking BookingDTO
-     * @return boolean success
+     * @return BookingDTO
      */
     public BookingDTO updateBooking(BookingDTO booking);
 
@@ -42,7 +46,7 @@ public interface IbookingService {
      * Delete Booking by ID
      *
      * @param bookingId int
-     * @return boolean success
+     * @return int deletedId
      */
-    public boolean deleteBooking(int bookingId);
+    public int deleteBooking(int bookingId);
 }

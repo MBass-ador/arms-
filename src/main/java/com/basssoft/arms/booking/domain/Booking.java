@@ -8,7 +8,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 /**
@@ -19,7 +18,6 @@ import java.time.LocalDateTime;
   * @author Matthew Bass
   * @version 1.0
   */
-
 @Data
 @Entity
 @AllArgsConstructor

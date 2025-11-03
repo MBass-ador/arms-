@@ -1,6 +1,5 @@
 package com.basssoft.arms.account.controller;
 
-
 import com.basssoft.arms.account.domain.AccountDTO;
 import com.basssoft.arms.account.service.IaccountService;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,13 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
+import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,31 +30,42 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @version 1.0
  */
 @WebMvcTest(AccountController.class)
+@Import(AccountControllerTest.TestConfig.class)
 public class AccountControllerTest {
 
     // to simulate HTTP requests
     @Autowired
     private MockMvc mockMvc;
 
-    // mock the service layer
-    static IaccountService accountService = Mockito.mock(IaccountService.class);
+    @Autowired
+    private IaccountService accountService;
 
-    // get mocked service
+    @Autowired
+    private AccountModelAssembler accountModelAssembler;
+
+    private AccountDTO mockAccountDto;
+
     @TestConfiguration
     static class TestConfig {
+
         @Bean
         IaccountService accountService() {
-            return accountService;
+            return Mockito.mock(IaccountService.class);
+        }
+        @Bean
+        AccountModelAssembler accountModelAssembler() {
+            return Mockito.mock(AccountModelAssembler.class);
         }
     }
 
 
     /**
-     * Tests @Link com.basssoft.account.controller.AccountController#createAccount
+     * * setup for tests
      */
-    @Test
-    void testCreateAccount() throws Exception {
-        AccountDTO mockAccountDto = new AccountDTO(
+    @BeforeEach
+    void setUp() {
+
+        mockAccountDto = new AccountDTO(
                 1,
                 "testuser",
                 "password123",
@@ -66,6 +79,25 @@ public class AccountControllerTest {
                 "TS",
                 "12345"
         );
+
+        when(accountModelAssembler.toModel(any(AccountDTO.class)))
+                .thenAnswer(invocation ->
+                        EntityModel.of(
+                                invocation.getArgument(0),
+                                linkTo(methodOn(AccountController.class)
+                                        .getAccount(1))
+                                        .withSelfRel()
+                        )
+                );
+    }
+
+
+
+    /**
+     * Tests @Link com.basssoft.account.controller.AccountController#createAccount
+     */
+    @Test
+    void testCreateAccount() throws Exception {
 
         when(accountService.createAccount(any(AccountDTO.class))).thenReturn(mockAccountDto);
 
@@ -90,9 +122,55 @@ public class AccountControllerTest {
                         .content(accountJson))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.accountId").value(1))
+                .andExpect(jsonPath("$.screenName").value("testuser"))
+                .andExpect(jsonPath("$._links.self.href").exists());;
+    }
+
+
+    /**
+     * Tests @Link com.basssoft.account.controller.AccountController#getAccount:success
+     */
+    @Test
+    void testGetAccount_Success() throws Exception {
+
+        when(accountService.getAccount(1)).thenReturn(mockAccountDto);
+
+        mockMvc.perform(get("/accounts/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accountId").value(1))
                 .andExpect(jsonPath("$.screenName").value("testuser"));
     }
 
+
+    /**
+     * Tests @Link com.basssoft.account.controller.AccountController#getAccount:notFound
+     */
+    @Test
+    void testGetAccount_NotFound() throws Exception {
+
+        when(accountService.getAccount(99)).thenReturn(null);
+
+        mockMvc.perform(get("/accounts/99"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$").value("Account not found."));
+    }
+
+
+    /**
+     * Tests @Link com.basssoft.account.controller.AccountController#getAccounts
+     */
+    @Test
+    void testGetAccounts() throws Exception {
+        List<AccountDTO> accounts = List.of(mockAccountDto);
+        when(accountService.getAllAccounts()).thenReturn(accounts);
+
+        mockMvc.perform(get("/accounts"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.accountDTOList[0].accountId")
+                        .value(1))
+                .andExpect(jsonPath("$._embedded.accountDTOList[0].screenName")
+                        .value("testuser"));
+    }
 
 
     /**
@@ -149,6 +227,32 @@ public class AccountControllerTest {
     }
 
 
+    /**
+     * Tests @Link com.basssoft.account.controller.AccountController#deleteAccount:success
+     */
+    @Test
+    void testDeleteAccount_Success() throws Exception {
+
+        when(accountService.deleteAccount(1)).thenReturn(1);
+
+        mockMvc.perform(delete("/accounts/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("Account deleted successfully."));
+    }
+
+
+    /**
+     * Tests @Link com.basssoft.account.controller.AccountController#deleteAccount:notFound
+     */
+    @Test
+    void testDeleteAccount_NotFound() throws Exception {
+
+        when(accountService.deleteAccount(99)).thenReturn(-1);
+
+        mockMvc.perform(delete("/accounts/99"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$").value("Account not found."));
+    }
 
 
 }

@@ -1,6 +1,5 @@
 package com.basssoft.arms.account.service;
 
-import com.basssoft.arms.account.domain.Account;
 import com.basssoft.arms.account.domain.AccountDTO;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public interface IaccountService {
      * Create new Account
      *
      * @param account AccountDTO
-     * @return boolean success
+     * @return AccountDTO
      */
     public AccountDTO createAccount(AccountDTO account);
 
@@ -34,9 +33,9 @@ public interface IaccountService {
     /**
      * Get all Accounts
      *
-     * @return List<Account>
+     * @return List<AccountDTO>
      */
-    public List<Account> getAllAccounts();
+    public List<AccountDTO> getAllAccounts();
 
     /**
      * Update existing Account
@@ -50,7 +49,7 @@ public interface IaccountService {
      * Delete Account by ID
      *
      * @param accountId int
-     * @return boolean success
+     * @return int
      */
-    public boolean deleteAccount(int accountId);
+    public int deleteAccount(int accountId);
 }

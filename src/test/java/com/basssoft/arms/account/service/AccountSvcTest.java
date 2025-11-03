@@ -1,6 +1,5 @@
 package com.basssoft.arms.account.service;
 
-import com.basssoft.arms.account.domain.Account;
 import com.basssoft.arms.account.domain.AccountDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,9 @@ public class AccountSvcTest {
 
     private AccountSvcImpl service;
 
+    /**
+     * Sets up the test environment before each test
+     */
     @BeforeEach
     public void setUp() {
         service = new AccountSvcImpl();
@@ -47,9 +49,12 @@ public class AccountSvcTest {
     }
 
 
+    /**
+     * Test method for {@link AccountSvcImpl#getAllAccounts()}.
+     */
     @Test
     public void testGetAllAccounts() {
-        List<Account> accounts = service.getAllAccounts();
+        List<AccountDTO> accounts = service.getAllAccounts();
         assertNotNull(accounts);
         assertTrue(accounts.isEmpty());
     }
@@ -71,8 +76,8 @@ public class AccountSvcTest {
      */
     @Test
     public void testDeleteAccount() {
-        boolean result = service.deleteAccount(1);
-        assertTrue(result);
+        int result = service.deleteAccount(1);
+        assertEquals(1, result);
     }
 
 }

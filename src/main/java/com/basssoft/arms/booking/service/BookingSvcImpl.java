@@ -1,7 +1,5 @@
 package com.basssoft.arms.booking.service;
 
-import com.basssoft.arms.account.domain.AccountDTO;
-import com.basssoft.arms.booking.domain.Booking;
 import com.basssoft.arms.booking.domain.BookingDTO;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -21,15 +19,11 @@ public class BookingSvcImpl implements IbookingService {
      * Create new Booking
 
      * @param booking BookingDTO
-     * @return boolean success (default true right now)
+     * @return BookingDTO (same as input right now)
      */
     public BookingDTO createBooking(BookingDTO booking) {
 
-        BookingDTO created = new BookingDTO();
-
-        created.setBookingId(1);
-
-        return created;
+        return booking;
     }
 
 
@@ -37,22 +31,24 @@ public class BookingSvcImpl implements IbookingService {
      * Get Booking by ID
 
      * @param bookingId int
-     * @return BookingDTO (empty right now)
+     * @return BookingDTO
      */
     public BookingDTO getBooking(int bookingId) {
 
-        return new BookingDTO();
+        BookingDTO created = new BookingDTO();
+        created.setBookingId(bookingId);
+        return created;
     }
 
 
     /**
      * Get all Bookings
 
-     * @return List<Booking> (empty right now)
+     * @return List<BookingDTO> (empty right now)
      */
-    public List<Booking> getAllBookings() {
+    public List<BookingDTO> getAllBookings() {
 
-        List<Booking> bookings = new ArrayList<>();
+        List<BookingDTO> bookings = new ArrayList<>();
 
         return bookings;
     }
@@ -62,14 +58,11 @@ public class BookingSvcImpl implements IbookingService {
      * Update existing Booking
 
      * @param booking BookingDTO
-     * @return boolean success (default true right now)
+     * @return BookingDTO (same as input right now)
      */
     public BookingDTO updateBooking(BookingDTO booking) {
 
-        BookingDTO updated = new BookingDTO();
-        updated.setBookingId(booking.getBookingId());
-
-        return updated;
+        return booking;
     }
 
 
@@ -77,11 +70,11 @@ public class BookingSvcImpl implements IbookingService {
      * Delete Booking by ID
 
      * @param bookingId int
-     * @return boolean success (default true right now)
+     * @return int deletedId
      */
-    public boolean deleteBooking(int bookingId) {
+    public int deleteBooking(int bookingId) {
 
-        return true;
+        return bookingId;
     }
 
 }
