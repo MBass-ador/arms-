@@ -14,7 +14,7 @@ import java.util.List;
  * @version 1.0
  */
 @Service
-public class InvoiceSvcImpl {
+public class InvoiceSvcImpl implements IinvoiceService {
 
 
 
@@ -22,11 +22,11 @@ public class InvoiceSvcImpl {
      * Create new Invoice
 
      * @param account InvoiceDTO
-     * @return boolean success (default true right now)
+     * @return InvoiceDTO (passed in DTO right now)
      */
-    public boolean createInvoice(InvoiceDTO account) {
+    public InvoiceDTO createInvoice(InvoiceDTO account) {
 
-        return true;
+        return account;
     }
 
 
@@ -34,18 +34,20 @@ public class InvoiceSvcImpl {
      * Get Invoice by ID
 
      * @param invoiceId int
-     * @return InvoiceDTO (empty right now)
+     * @return InvoiceDTO
      */
     public InvoiceDTO getInvoice(int invoiceId) {
 
-        return new InvoiceDTO();
+        InvoiceDTO created = new InvoiceDTO();
+        created.setInvoiceId(invoiceId);
+        return created;
     }
 
 
     /**
      * Get all Invoices
 
-     * @return List<Invoice>
+     * @return List<InvoiceDTO> invoices
      */
     public List<InvoiceDTO> getAllInvoices() {
 
@@ -59,11 +61,11 @@ public class InvoiceSvcImpl {
      * Update existing Invoice
 
      * @param account InvoiceDTO
-     * @return boolean success
+     * @return InvoiceDTO (same as passed in right now)
      */
-    public boolean updateInvoice(InvoiceDTO account) {
+    public InvoiceDTO updateInvoice(InvoiceDTO account) {
 
-        return true;
+        return account;
     }
 
 
@@ -71,10 +73,11 @@ public class InvoiceSvcImpl {
      * Delete Invoice by ID
 
      * @param invoiceId int
-     * @return boolean success
+     * @return int deletedId (same as passed in right now)
      */
-    public boolean deleteInvoice(int invoiceId) {
-        return true;
+    public int deleteInvoice(int invoiceId) {
+
+        return invoiceId;
     }
 
 }

@@ -7,6 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
+/**
+ * aggregates per service test suites
+ * for the arms application
+
+ * @author Matthew Bass
+ * @version 1.0
+ */
 @Suite
 @SelectClasses({
         AllBookingTests.class,
@@ -18,7 +25,6 @@ class ArmsApplicationTests {
     @Test
     void contextLoads() {
     }
-
 
 
 }

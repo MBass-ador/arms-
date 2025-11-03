@@ -1,6 +1,5 @@
 package com.basssoft.arms.booking.service;
 
-import com.basssoft.arms.booking.domain.Booking;
 import com.basssoft.arms.booking.domain.BookingDTO;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -13,18 +12,18 @@ import java.util.List;
  * @version 1.0
  */
 @Service
-public class BookingSvcImpl {
+public class BookingSvcImpl implements IbookingService {
 
 
     /**
      * Create new Booking
 
      * @param booking BookingDTO
-     * @return boolean success (default true right now)
+     * @return BookingDTO (same as input right now)
      */
-    public boolean createBooking(BookingDTO booking) {
+    public BookingDTO createBooking(BookingDTO booking) {
 
-        return true;
+        return booking;
     }
 
 
@@ -32,22 +31,24 @@ public class BookingSvcImpl {
      * Get Booking by ID
 
      * @param bookingId int
-     * @return BookingDTO (empty right now)
+     * @return BookingDTO
      */
     public BookingDTO getBooking(int bookingId) {
 
-        return new BookingDTO();
+        BookingDTO created = new BookingDTO();
+        created.setBookingId(bookingId);
+        return created;
     }
 
 
     /**
      * Get all Bookings
 
-     * @return List<Booking> (empty right now)
+     * @return List<BookingDTO> (empty right now)
      */
-    public List<Booking> getAllBookings() {
+    public List<BookingDTO> getAllBookings() {
 
-        List<Booking> bookings = new ArrayList<>();
+        List<BookingDTO> bookings = new ArrayList<>();
 
         return bookings;
     }
@@ -57,11 +58,11 @@ public class BookingSvcImpl {
      * Update existing Booking
 
      * @param booking BookingDTO
-     * @return boolean success (default true right now)
+     * @return BookingDTO (same as input right now)
      */
-    public boolean updateBooking(BookingDTO booking) {
+    public BookingDTO updateBooking(BookingDTO booking) {
 
-        return true;
+        return booking;
     }
 
 
@@ -69,11 +70,11 @@ public class BookingSvcImpl {
      * Delete Booking by ID
 
      * @param bookingId int
-     * @return boolean success (default true right now)
+     * @return int deletedId
      */
-    public boolean deleteBooking(int bookingId) {
+    public int deleteBooking(int bookingId) {
 
-        return true;
+        return bookingId;
     }
 
 }

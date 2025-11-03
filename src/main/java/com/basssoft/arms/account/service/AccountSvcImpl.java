@@ -1,6 +1,5 @@
 package com.basssoft.arms.account.service;
 
-import com.basssoft.arms.account.domain.Account;
 import com.basssoft.arms.account.domain.AccountDTO;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.List;
  * @version 1.0
  */
 @Service
-public class AccountSvcImpl {
+public class AccountSvcImpl implements IaccountService {
 
 
 
@@ -23,11 +22,11 @@ public class AccountSvcImpl {
      * Create new Account
 
      * @param account AccountDTO
-     * @return boolean success (default true right now)
+     * @return AccountDTO created account
      */
-    public boolean createAccount(AccountDTO account){
+    public AccountDTO createAccount(AccountDTO account){
 
-        return true;
+        return account;
     }
 
 
@@ -35,21 +34,23 @@ public class AccountSvcImpl {
      * Get Account by ID
 
      * @param accountId int
-     * @return AccountDTO (empty right now)
+     * @return AccountDTO (just id right now)
      */
     public AccountDTO getAccount(int accountId) {
 
-        return new AccountDTO();
+        AccountDTO created = new AccountDTO();
+        created.setAccountId(accountId);
+        return created;
     }
 
     /**
      * Get all Accounts
 
-     * @return List<Account> (empty right now)
+     * @return List<AccountDTO> (empty list right now)
      */
-    public List<Account> getAllAccounts() {
+    public List<AccountDTO> getAllAccounts() {
 
-        List<Account> accounts = new ArrayList<>();
+        List<AccountDTO> accounts = new ArrayList<>();
 
         return accounts;
     }
@@ -59,11 +60,11 @@ public class AccountSvcImpl {
      * Update existing Account
 
      * @param account AccountDTO
-     * @return boolean success (default true right now)
+     * @return AccountDTO updated account
      */
-    public boolean updateAccount(AccountDTO account) {
+    public AccountDTO updateAccount(AccountDTO account) {
 
-        return true;
+        return account;
     }
 
 
@@ -71,11 +72,11 @@ public class AccountSvcImpl {
      * Delete Account by ID
 
      * @param accountId int
-     * @return boolean success (default true right now)
+     * @return int deletedAccountId
      */
-    public boolean deleteAccount(int accountId) {
+    public int deleteAccount(int accountId) {
 
-        return true;
+        return accountId;
     }
 
 }

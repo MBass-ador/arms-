@@ -4,8 +4,7 @@ import com.basssoft.arms.invoice.domain.InvoiceDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for {@link InvoiceSvcImpl}
@@ -19,7 +18,9 @@ public class InvoiceSvcTest {
 
     private InvoiceSvcImpl service;
 
-
+    /**
+     * Setup method initializes service before each test
+     */
     @BeforeEach
     public void setUp() {
         service = new InvoiceSvcImpl();
@@ -33,8 +34,9 @@ public class InvoiceSvcTest {
     public void testCreateInvoice() {
 
         InvoiceDTO invoiceDTO = new InvoiceDTO();
-        boolean result = service.createInvoice(invoiceDTO);
-        assertTrue(result);
+        InvoiceDTO result = service.createInvoice(invoiceDTO);
+        assertNotNull(result);
+        assertNotNull(result.getInvoiceId());
     }
     
     /**
@@ -64,8 +66,8 @@ public class InvoiceSvcTest {
     public void testUpdateInvoice() {
 
         InvoiceDTO invoiceDTO = new InvoiceDTO();
-        boolean result = service.updateInvoice(invoiceDTO);
-        assertTrue(result);
+        InvoiceDTO result = service.updateInvoice(invoiceDTO);
+        assertEquals(result, invoiceDTO);
     }
     
     /**
@@ -74,8 +76,10 @@ public class InvoiceSvcTest {
     @Test
     public void testDeleteInvoice() {
 
-        boolean result = service.deleteInvoice(1);
-        assertTrue(result);
+        int result = service.deleteInvoice(1);
+        assertEquals(1, result);
     }
-    
+
+
+
 }

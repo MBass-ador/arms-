@@ -1,7 +1,9 @@
 package com.basssoft.arms.booking.domain;
 
 import com.basssoft.arms.account.domain.Account;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Data Transfer Object
@@ -12,7 +14,11 @@ import lombok.Data;
  * @version 1.0
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookingDTO {
+
+    private int bookingId;
 
     private Account provider;
     private Account customer;
