@@ -8,13 +8,13 @@ import java.util.List;
  *
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 public interface IinvoiceService {
 
     /**
      * Create new Invoice
-     *
+
      * @param account InvoiceDTO
      * @return InvoiceDTO
      */
@@ -22,7 +22,7 @@ public interface IinvoiceService {
 
     /**
      * Get Invoice by ID
-     *
+
      * @param invoiceId int
      * @return InvoiceDTO
      */
@@ -30,14 +30,14 @@ public interface IinvoiceService {
 
     /**
      * Get all Invoices
-     *
+
      * @return List<InvoiceDTO>
      */
     public List<InvoiceDTO> getAllInvoices();
 
     /**
      * Update existing Invoice
-     *
+
      * @param account InvoiceDTO
      * @return InvoiceDTO
      */
@@ -45,7 +45,7 @@ public interface IinvoiceService {
 
     /**
      * Delete Invoice by ID
-     *
+
      * @param invoiceId int
      * @return int deletedId
      */

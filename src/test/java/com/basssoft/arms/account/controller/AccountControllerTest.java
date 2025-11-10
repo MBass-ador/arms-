@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @WebMvcTest(AccountController.class)
 @Import(AccountControllerTest.TestConfig.class)

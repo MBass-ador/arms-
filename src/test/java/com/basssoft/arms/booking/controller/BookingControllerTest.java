@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @WebMvcTest(BookingController.class)
 @Import(BookingControllerTest.TestConfig.class)
@@ -64,36 +64,22 @@ public class BookingControllerTest {
      */
     @BeforeEach
     void setUp() {
-        provider = new Account();
-        provider.setAccountId(10);
-        provider.setScreenName("providerUser");
-        provider.setEmail("provider@email.com");
 
-        customer = new Account();
-        customer.setAccountId(20);
-        customer.setScreenName("customerUser");
-        customer.setEmail("customer@email.com");
+        int providerId = 10;
+        int customerId = 20;
 
         bookingDto = new BookingDTO();
         bookingDto.setBookingId(1);
-        bookingDto.setProvider(provider);
-        bookingDto.setCustomer(customer);
+        bookingDto.setProvider(providerId);
+        bookingDto.setCustomer(customerId);
 
         bookingJson = """
-            {
-                "bookingId": 1,
-                "provider": {
-                    "accountId": 10,
-                    "screenName": "providerUser",
-                    "email": "provider@email.com"
-                },
-                "customer": {
-                    "accountId": 20,
-                    "screenName": "customerUser",
-                    "email": "customer@email.com"
-                }
-            }
-        """;
+        {
+            "bookingId": 1,
+            "provider": 10,
+            "customer": 20
+        }
+    """;
 
         Mockito.when(bookingModelAssembler.toModel(Mockito.any(BookingDTO.class)))
                 .thenAnswer(invocation ->
@@ -120,13 +106,9 @@ public class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(bookingJson))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.provider.accountId").value(10))
-                .andExpect(jsonPath("$.provider.screenName").value("providerUser"))
-                .andExpect(jsonPath("$.provider.email").value("provider@email.com"))
-
-                .andExpect(jsonPath("$.customer.accountId").value(20))
-                .andExpect(jsonPath("$.customer.screenName").value("customerUser"))
-                .andExpect(jsonPath("$.customer.email").value("customer@email.com"))
+                .andExpect(jsonPath("$.bookingId").exists())
+                .andExpect(jsonPath("$.provider").value(10))
+                .andExpect(jsonPath("$.customer").value(20))
                 .andExpect(jsonPath("$._links.self.href").exists());
     }
 
@@ -141,8 +123,9 @@ public class BookingControllerTest {
         mockMvc.perform(get("/bookings/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.bookingId").value(1))
-                .andExpect(jsonPath("$.provider.accountId").value(10))
-                .andExpect(jsonPath("$.customer.accountId").value(20));
+                .andExpect(jsonPath("$.provider").value(10))
+                .andExpect(jsonPath("$.customer").value(20))
+                .andExpect(jsonPath("$._links.self.href").exists());
     }
 
 
@@ -170,9 +153,10 @@ public class BookingControllerTest {
         Mockito.when(bookingService.getAllBookings()).thenReturn(bookings);
 
         mockMvc.perform(get("/bookings"))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.bookingDTOList[0].bookingId").value(1))
-                .andExpect(jsonPath("$._embedded.bookingDTOList[0].provider.accountId").value(10))
-                .andExpect(jsonPath("$._embedded.bookingDTOList[0].customer.accountId").value(20))
+                .andExpect(jsonPath("$._embedded.bookingDTOList[0].provider").value(10))
+                .andExpect(jsonPath("$._embedded.bookingDTOList[0].customer").value(20))
                 .andExpect(jsonPath("$._embedded.bookingDTOList[0]._links.self.href").exists())
                 .andExpect(jsonPath("$._links.self.href").exists());
     }
@@ -191,8 +175,9 @@ public class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(bookingJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.provider.accountId").value(10))
-                .andExpect(jsonPath("$.customer.accountId").value(20))
+                .andExpect(jsonPath("$.bookingId").value(1))
+                .andExpect(jsonPath("$.provider").value(10))
+                .andExpect(jsonPath("$.customer").value(20))
                 .andExpect(jsonPath("$._links.self.href").exists());
     }
 

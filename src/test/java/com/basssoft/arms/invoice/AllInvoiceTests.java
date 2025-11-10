@@ -10,7 +10,7 @@ import com.basssoft.arms.invoice.service.InvoiceSvcTest;
  *
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @Suite
 @SelectClasses({
