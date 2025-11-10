@@ -18,7 +18,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @RestController
 @RequestMapping("/bookings")
@@ -29,7 +29,6 @@ public class BookingController {
 
     @Autowired
     private BookingModelAssembler assembler;
-
 
     /**
      * Create new Booking
@@ -52,7 +51,7 @@ public class BookingController {
             return ResponseEntity.badRequest().body(ex.getMessage());
 
         } catch (Exception ex) {
-            // Handle other errors status: 500
+            // handle other errors status: 500
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Booking creation failed.");
         }
     }
@@ -115,7 +114,6 @@ public class BookingController {
             );
             // return collection, status:200
             return ResponseEntity.ok(collectionModel);
-
 
         } catch (IllegalArgumentException iae) {
             // handle bad request status: 400

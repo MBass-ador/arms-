@@ -1,6 +1,5 @@
 package com.basssoft.arms.invoice.controller;
 
-
 import com.basssoft.arms.invoice.domain.InvoiceDTO;
 import com.basssoft.arms.invoice.service.IinvoiceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import java.math.BigDecimal;
 import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @WebMvcTest(InvoiceController.class)
 @Import(InvoiceControllerTest.TestConfig.class)
@@ -68,12 +68,11 @@ public class InvoiceControllerTest {
         responseDto.setInvoiceId(1);
         responseDto.setProviderId(123);
         responseDto.setCustomerId(456);
-        responseDto.setTotalAmountDue(250.75f);
+        responseDto.setTotalAmountDue(BigDecimal.valueOf(250.75));
 
         EntityModel<InvoiceDTO> model = EntityModel.of(responseDto,
                 linkTo(methodOn(InvoiceController.class).getInvoice(1)).withSelfRel()
         );
-
         when(assembler.toModel(any(InvoiceDTO.class)))
                 .thenAnswer(invocation -> {
 
@@ -87,6 +86,7 @@ public class InvoiceControllerTest {
         });
     }
 
+
     /**
      *  Tests {@link InvoiceController#createInvoice}
      */
@@ -95,7 +95,7 @@ public class InvoiceControllerTest {
         InvoiceDTO requestDto = new InvoiceDTO();
         requestDto.setProviderId(123);
         requestDto.setCustomerId(456);
-        requestDto.setTotalAmountDue(250.75f);
+        requestDto.setTotalAmountDue(BigDecimal.valueOf(250.75));
 
         when(invoiceService.createInvoice(any(InvoiceDTO.class))).thenReturn(responseDto);
 
@@ -121,7 +121,7 @@ public class InvoiceControllerTest {
         responseDto.setInvoiceId(invoiceId);
         responseDto.setProviderId(123);
         responseDto.setCustomerId(456);
-        responseDto.setTotalAmountDue(250.75f);
+        responseDto.setTotalAmountDue(BigDecimal.valueOf(250.75));
 
         when(invoiceService.getInvoice(invoiceId)).thenReturn(responseDto);
 
@@ -157,7 +157,7 @@ public class InvoiceControllerTest {
 
         InvoiceDTO invoiceDto = new InvoiceDTO();
         invoiceDto.setInvoiceId(1);
-        invoiceDto.setTotalAmountDue(100.0f);
+        invoiceDto.setTotalAmountDue(BigDecimal.valueOf(100.0));
 
         List<InvoiceDTO> invoices = List.of(invoiceDto);
         Mockito.when(invoiceService.getAllInvoices()).thenReturn(invoices);
@@ -167,7 +167,6 @@ public class InvoiceControllerTest {
                 .andExpect(jsonPath("$._embedded.invoiceDTOList[0].invoiceId").value(1))
                 .andExpect(jsonPath("$._embedded.invoiceDTOList[0].totalAmountDue").value(100.0))
                 .andExpect(jsonPath("$._embedded.invoiceDTOList[0]._links.self.href").exists());
-        ;
     }
 
 
@@ -183,13 +182,13 @@ public class InvoiceControllerTest {
         InvoiceDTO requestDto = new InvoiceDTO();
         requestDto.setProviderId(123);
         requestDto.setCustomerId(456);
-        requestDto.setTotalAmountDue(300.00f);
+        requestDto.setTotalAmountDue(BigDecimal.valueOf(300.00));
 
         InvoiceDTO responseDto = new InvoiceDTO();
         responseDto.setInvoiceId(invoiceId);
         responseDto.setProviderId(123);
         responseDto.setCustomerId(456);
-        responseDto.setTotalAmountDue(300.00f);
+        responseDto.setTotalAmountDue(BigDecimal.valueOf(300.00));
 
         when(invoiceService.updateInvoice(any(InvoiceDTO.class))).thenReturn(responseDto);
 
@@ -215,7 +214,7 @@ public class InvoiceControllerTest {
         InvoiceDTO requestDto = new InvoiceDTO();
         requestDto.setProviderId(123);
         requestDto.setCustomerId(456);
-        requestDto.setTotalAmountDue(300.00f);
+        requestDto.setTotalAmountDue(BigDecimal.valueOf(300.00));
 
         when(invoiceService.updateInvoice(any(InvoiceDTO.class))).thenReturn(null);
 

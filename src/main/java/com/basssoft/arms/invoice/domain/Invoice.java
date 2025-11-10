@@ -2,13 +2,10 @@ package com.basssoft.arms.invoice.domain;
 
 import com.basssoft.arms.account.domain.Account;
 import com.basssoft.arms.booking.domain.Booking;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
 
@@ -18,29 +15,54 @@ import java.time.LocalDateTime;
 
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
-@Data
 @Entity
+@Data
+@Table(name = "invoices")
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PUBLIC, force = true)
+@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Invoice {
 
     @Id
-    private int invoiceId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
+    private Integer invoiceId;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Account provider;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Account customer;
 
     // all unpaid bookings between
     // this provider and this customer
-    private List<Booking> bookings;
+    @Transient
+    @ToString.Exclude
+    private List<Booking> bookings = new ArrayList<>();
 
-    private float totalAmountDue;
+    @Column(precision = 20, scale = 2, nullable = false)
+    private BigDecimal totalAmountDue = BigDecimal.ZERO;
 
     // timestamp of last attempt to collect
+    @Column
     private LocalDateTime lastContacted;
+
+
+    /* constructor to create Invoice with provider and customer
+     * initializes bookings as empty list and totalAmountDue as zero
+     */
+    public Invoice(Account provider, Account customer) {
+        this.provider = provider;
+        this.customer = customer;
+        this.bookings = new ArrayList<>();
+        this.totalAmountDue = java.math.BigDecimal.ZERO;
+        this.lastContacted = null;
+    }
+
+
+
 }

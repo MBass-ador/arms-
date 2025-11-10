@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
  * Central REST API endpoint
  * for arms application.
 
- * Aggregates controllers for: account, booking, and invoice service management.
+ * aggregates controllers for: account, booking, and invoice services
+ * All endpoints accessible under `/api` path.
 
- * All endpoints are accessible under the `/api` path.
-
+ * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @RestController
 @RequestMapping("/api")

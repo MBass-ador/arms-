@@ -13,7 +13,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @Component
 public class BookingModelAssembler

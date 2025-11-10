@@ -10,18 +10,18 @@ import lombok.NoArgsConstructor;
 
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountDTO {
 
-    private int accountId;
+    private Integer accountId;
 
     private String screenName;
     private String password;
-    private boolean isProvider;
+    private boolean provider;
 
     private String firstName;
     private String lastName;

@@ -13,12 +13,16 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  *
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @Component
 public class InvoiceModelAssembler
         implements RepresentationModelAssembler<InvoiceDTO, EntityModel<InvoiceDTO>>  {
 
+    /**
+     * Converts an InvoiceDTO to an EntityModel<InvoiceDTO>
+     * with HATEOAS links
+     */
     @Override
     public EntityModel<InvoiceDTO> toModel(InvoiceDTO invoice) {
 
