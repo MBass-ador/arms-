@@ -1,0 +1,44 @@
+<!--
+template fragment for ARMS application
+
+parent: invoiceFragment
+children: none
+
+version 4.0
+Author: Matthew Bass
+-->
+
+<section th:fragment="buttons(accountId, invoiceMode)" class="buttons">
+
+    <!-- default mode - only display message-->
+    <div th:if="${invoiceMode} == 'default'">
+        <div class="success-message">Select an invoice to:<br> view, pay, or email<br> the provider</div>
+
+    </div>
+
+    <!-- view mode: pay and email buttons -->
+    <div th:if="${invoiceMode} == 'view'">
+
+        <button id="payBtn" type="button"
+                class="btn btn-primary"
+                th:onclick="|location.href='@{/invoices/pay/{id}(id=${accountId})}'|">
+            Pay Invoice
+        </button>
+
+        <button id="messageBtn" type="button"
+                class="btn btn-secondary"
+                th:onclick="|location.href='@{/invoices/message/{id}(id=${accountId})}'|">
+            Email Provider
+        </button>
+    </div>
+
+
+    <!-- cancel button for all non-default modes -->
+    <button id="cancelBtn" type="button"
+            th:if="${invoiceMode} != 'default'"
+            class="btn btn-secondary"
+            th:onclick="|location.href='@{/invoices/cancel/{id}(id=${accountId})}'|">
+        Cancel
+    </button>
+
+</section>

@@ -1,11 +1,8 @@
 package com.basssoft.arms.account.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import lombok.*;
 
 /**
  * Account
@@ -13,29 +10,56 @@ import lombok.AllArgsConstructor;
 
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
-@Data
+@Getter
+@Setter
 @Entity
+@Table(name = "accounts")
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PUBLIC, force = true)
+@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Account {
 
     @Id
-    private int accountId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
+    @Column(name = "account_id", nullable = false)
+    private Integer accountId;
 
+    @Column(name = "screen_name", nullable = false, unique = true, length = 24)
     private String screenName;
-    private String password;
-    private boolean isProvider;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ToString.Exclude
+    @Column(nullable = false, length = 60)
+    private String password;
+
+    @Column(nullable = false)
+    private boolean provider;
+
+    @Column(name= "first_name", nullable = false, length = 24)
     private String firstName;
+
+    @Column(name= "last_name", nullable = false, length = 24)
     private String lastName;
 
+    @Column(nullable = false, unique = true, length = 48)
     private String email;
+
+    @Column(name= "phone_number", nullable = false, length = 15)
     private String phoneNumber;
 
+    @Column(nullable = false, length = 24)
     private String street;
+
+    @Column(nullable = false, length = 24)
     private String city;
+
+    @Column(nullable = false, length = 24)
     private String state;
+
+    @Column(name= "zip_code", nullable = false, length = 10)
     private String zipCode;
 }

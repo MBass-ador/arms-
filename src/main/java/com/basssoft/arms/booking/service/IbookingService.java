@@ -7,7 +7,7 @@ import java.util.List;
 
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 public interface IbookingService {
 
@@ -32,7 +32,7 @@ public interface IbookingService {
      *
      * @return List<BookingDTO>
      */
-    public List<BookingDTO> getAllBookings();
+    public List<BookingDTO> getCustomerBookings(int customerId);
 
     /**
      * Update existing Booking

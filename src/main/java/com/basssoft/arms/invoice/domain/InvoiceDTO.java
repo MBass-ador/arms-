@@ -1,7 +1,11 @@
 package com.basssoft.arms.invoice.domain;
 
-import com.basssoft.arms.booking.domain.Booking;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -10,19 +14,21 @@ import java.util.List;
 
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class InvoiceDTO {
 
-    private int invoiceId;
+    private Integer invoiceId;
 
-    private int providerId;
-    private int customerId;
+    private Integer providerId;
+    private Integer customerId;
 
-    private List<Booking> bookings;
+    private List<Integer> bookingIds;
 
-    private float totalAmountDue;
+    private BigDecimal totalAmountDue;
 
-    private String lastContacted;
+    private LocalDateTime lastContacted;
 }

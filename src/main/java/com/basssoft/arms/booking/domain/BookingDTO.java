@@ -1,9 +1,11 @@
 package com.basssoft.arms.booking.domain;
 
-import com.basssoft.arms.account.domain.Account;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Data Transfer Object
@@ -11,21 +13,24 @@ import lombok.NoArgsConstructor;
 
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingDTO {
 
-    private int bookingId;
+    private Integer bookingId;
 
-    private Account provider;
-    private Account customer;
+    private Integer provider;
+    private Integer customer;
 
-    private float hourlyRate;
-    private String startTime;
-    private String endTime;
+    private String providerName;
+    private String customerName;
+
+    private BigDecimal hourlyRate;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     private String locStreet;
     private String locCity;
@@ -33,5 +38,6 @@ public class BookingDTO {
     private String locZipCode;
 
     private boolean completed;
-    private float overHours;
+    private BigDecimal overHours;
+    private boolean paid;
 }

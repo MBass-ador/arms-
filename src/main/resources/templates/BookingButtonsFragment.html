@@ -1,0 +1,90 @@
+<!-- BookingButtonsFragment.html -->
+<section xmlns:th="http://www.thymeleaf.org" th:fragment="buttons(customerId, bookMode)" class="buttons">
+
+    <!-- default mode -->
+    <button type="button" class="btn btn-primary"
+            th:if="${bookMode} == 'default'"
+            th:onclick="|location.href='@{/bookings/createMode/{id}(id=${customerId})}'|">
+        + New Booking
+    </button>
+
+
+    <div th:if="${bookMode} == 'default'" class="success-message">
+        Select a booking to view, edit, or delete.
+    </div>
+    <!--
+    template fragment for ARMS application
+
+    parent: accountFragment
+    children: none
+
+    version 4.0
+    Author: Matthew Bass
+    -->
+
+    <!-- create mode:  -->
+    <button type="submit" class="btn btn-primary"
+            th:if="${bookMode} == 'create'"
+            th:attr="form='bookingForm',
+            formaction=@{/bookings},
+            formmethod='post'">
+        Save
+    </button>
+
+
+    <!-- view mode -->
+    <button type="button" class="btn btn-secondary"
+            th:if="${(bookMode == 'view' or bookMode == 'cantDelete') and selectedBooking != null}"
+            th:onclick="|location.href='@{/bookings/editMode/{id}(id=${selectedBooking.bookingId})}'|">
+        Edit
+    </button>
+
+    <button type="submit" class="btn btn-danger"
+            th:if="${(bookMode == 'view' or bookMode == 'cantDelete') and selectedBooking != null}"
+            th:attr="form='bookingForm',
+                 formaction=@{/bookings/delete/{id}(id=${selectedBooking.bookingId})},
+                 formmethod='post'">
+        Delete
+    </button>
+
+    <!-- cantDelete mode (same as viewMode but shows can't delete message) -->
+    <div th:if="${cantDelete}" class="success-message">
+        Cannot delete completed booking.
+    </div>
+
+    <!-- edit mode -->
+    <button type="submit" class="btn btn-primary"
+            th:if="${bookMode} == 'edit'"
+            th:attr="form='bookingForm',
+            formaction=@{/bookings/update/{id}(id=${selectedBooking.bookingId})},
+            formmethod='post'">
+        Save
+    </button>
+
+
+
+
+
+    <!-- cancel button for non-default modes -->
+    <button type="button"
+            th:if="${bookMode} != 'default'"
+            class="btn btn-secondary"
+            th:onclick="|location.href='@{/bookings/cancel/{id}(id=${customerId})}'|">
+        Cancel
+    </button>
+
+
+    <!-- success messages -->
+    <div th:if="${createSuccess}" class="success-message">
+        Booking Created
+    </div>
+
+    <div th:if="${updateSuccess}" class="success-message">
+        Booking Updated
+    </div>
+
+    <div th:if="${deleteSuccess}" class="success-message">
+        Booking Deleted
+    </div>
+
+</section>

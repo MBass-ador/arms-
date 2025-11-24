@@ -1,29 +1,99 @@
 package com.basssoft.arms.booking.service;
 
+import com.basssoft.arms.account.domain.Account;
+import com.basssoft.arms.account.domain.AccountDTO;
+import com.basssoft.arms.account.repository.AccountRepository;
+import com.basssoft.arms.account.service.AccountSvcImpl;
+import com.basssoft.arms.booking.domain.Booking;
 import com.basssoft.arms.booking.domain.BookingDTO;
+import com.basssoft.arms.booking.repository.BookingRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /** * Booking Service Implementation
 
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @Service
+@Transactional
 public class BookingSvcImpl implements IbookingService {
+
+    // dependencies
+    private final BookingRepository repo;
+    private final AccountSvcImpl accountService;
+    private final AccountRepository accountRepository;
+    private final ModelMapper mapper;
+
+    // constructor
+    // injection of dependencies
+    // and ModelMapper config
+    public BookingSvcImpl(BookingRepository repo,
+                          AccountSvcImpl accountService,
+                          ModelMapper mapper,
+                          AccountRepository accountRepository) {
+        this.repo = repo;
+        this.accountService = accountService;
+        this.mapper = mapper;
+        this.accountRepository = accountRepository;
+
+        // stop ModelMapper from mapping Account -> Integer
+        this.mapper.createTypeMap(Booking.class, BookingDTO.class)
+                .addMappings(m -> {
+                    m.skip(BookingDTO::setCustomer);
+                    m.skip(BookingDTO::setProvider);
+                });
+
+        // DTO -> Entity mapping also skips accounts (set manually in service methods)
+        this.mapper.createTypeMap(BookingDTO.class, Booking.class)
+                .addMappings(m -> {
+                    m.skip(Booking::setCustomer);
+                    m.skip(Booking::setProvider);
+                });
+    }
+
+
 
 
     /**
      * Create new Booking
 
      * @param booking BookingDTO
-     * @return BookingDTO (same as input right now)
+     * @return BookingDTO of created booking
      */
     public BookingDTO createBooking(BookingDTO booking) {
 
-        return booking;
+        // null check
+        if (booking == null) {
+            return null;
+        }
+        // map DTO to entity
+        Booking entity = mapper.map(booking, Booking.class);
+
+        // get accounts for customer and provider
+        if (booking.getCustomer() != null) {
+            Account customer = accountRepository.findById(booking.getCustomer())
+                    .orElseThrow(() -> new NoSuchElementException("Customer not found: " + booking.getCustomer()));
+            entity.setCustomer(customer);
+        }
+        if (booking.getProvider() != null) {
+            Account provider = accountRepository.findById(booking.getProvider())
+                    .orElseThrow(() -> new NoSuchElementException("Provider not found: " + booking.getProvider()));
+            entity.setProvider(provider);
+        }
+        // persist entity
+        Booking saved = repo.save(entity);
+        // map back to DTO
+        BookingDTO result = mapper.map(saved, BookingDTO.class);
+        result.setCustomer(saved.getCustomer() != null ? saved.getCustomer().getAccountId() : null);
+        result.setProvider(saved.getProvider() != null ? saved.getProvider().getAccountId() : null);
+        // return created DTO
+        return result;
     }
 
 
@@ -35,22 +105,39 @@ public class BookingSvcImpl implements IbookingService {
      */
     public BookingDTO getBooking(int bookingId) {
 
-        BookingDTO created = new BookingDTO();
-        created.setBookingId(bookingId);
-        return created;
+        // get booking from repo
+        Optional<Booking> opt = repo.findById(bookingId);
+        if (opt.isEmpty()) {
+            // not found
+            return null;
+        }
+        Booking saved = opt.get();
+        // convert to dto
+        BookingDTO dto = mapper.map(saved, BookingDTO.class);
+        //
+        dto.setCustomer(saved.getCustomer() != null ? saved.getCustomer().getAccountId() : null);
+        dto.setProvider(saved.getProvider() != null ? saved.getProvider().getAccountId() : null);
+        // return dto
+        return dto;
     }
 
 
     /**
      * Get all Bookings
 
-     * @return List<BookingDTO> (empty right now)
+     * @return List<BookingDTO>
      */
-    public List<BookingDTO> getAllBookings() {
+    public List<BookingDTO> getCustomerBookings(int customerId) {
 
-        List<BookingDTO> bookings = new ArrayList<>();
-
-        return bookings;
+        return repo.findByCustomer_AccountId(customerId)
+                .stream()
+                .map(saved -> {
+                    BookingDTO dto = mapper.map(saved, BookingDTO.class);
+                    dto.setCustomer(saved.getCustomer() != null ? saved.getCustomer().getAccountId() : null);
+                    dto.setProvider(saved.getProvider() != null ? saved.getProvider().getAccountId() : null);
+                    return dto;
+                })
+                .collect(java.util.stream.Collectors.toList());
     }
 
 
@@ -58,11 +145,49 @@ public class BookingSvcImpl implements IbookingService {
      * Update existing Booking
 
      * @param booking BookingDTO
-     * @return BookingDTO (same as input right now)
+     * @return BookingDTO
      */
     public BookingDTO updateBooking(BookingDTO booking) {
 
-        return booking;
+        // null check
+        if (booking == null || booking.getBookingId() == null) {
+            return null;
+        }
+        // check exists in repo
+        Optional<Booking> opt = repo.findById(booking.getBookingId());
+        if (opt.isEmpty()) {
+            return null;
+        }
+        // get existing entity
+        Booking entity = opt.get();
+        // set fields from dto
+        entity.setHourlyRate(booking.getHourlyRate());
+        entity.setStartTime(booking.getStartTime());
+        entity.setEndTime(booking.getEndTime());
+        entity.setLocStreet(booking.getLocStreet());
+        entity.setLocCity(booking.getLocCity());
+        entity.setLocState(booking.getLocState());
+        entity.setLocZipCode(booking.getLocZipCode());
+        entity.setCompleted(booking.isCompleted());
+        entity.setOverHours(booking.getOverHours());
+        entity.setPaid(booking.isPaid());
+        // get customer and provider accounts if they exist
+        if (booking.getCustomer() != null) {
+            AccountDTO customerDto = accountService.getAccount(booking.getCustomer());
+            entity.setCustomer(customerDto != null ? mapper.map(customerDto, Account.class) : null);
+        }
+        if (booking.getProvider() != null) {
+            AccountDTO providerDto = accountService.getAccount(booking.getProvider());
+            entity.setProvider(providerDto != null ? mapper.map(providerDto, Account.class) : null);
+        }
+        // save updated account entity
+        Booking saved = repo.save(entity);
+
+        // map back to dto and return
+        BookingDTO result = mapper.map(saved, BookingDTO.class);
+        result.setCustomer(saved.getCustomer() != null ? saved.getCustomer().getAccountId() : null);
+        result.setProvider(saved.getProvider() != null ? saved.getProvider().getAccountId() : null);
+        return result;
     }
 
 
@@ -73,6 +198,15 @@ public class BookingSvcImpl implements IbookingService {
      * @return int deletedId
      */
     public int deleteBooking(int bookingId) {
+
+        // check exists
+        Optional<Booking> opt = repo.findById(bookingId);
+
+        // if not found, return 0
+        if (opt.isEmpty()) {
+            return 0;
+        }
+        repo.deleteById(bookingId);
 
         return bookingId;
     }

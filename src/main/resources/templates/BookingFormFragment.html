@@ -1,0 +1,98 @@
+<!--
+template fragment for ARMS application
+
+parent: bookingFragment
+children: none
+
+version 4.0
+Author: Matthew Bass
+-->
+
+<section xmlns:th="http://www.thymeleaf.org" th:fragment="form(accountId, bookMode, booking)" class="content">
+
+
+
+    <div class="invoice-content">
+
+        <form id="bookingForm" action="" method="get">
+
+            <input type="hidden" name="bookingId" th:if="${bookMode != 'create' and bookMode != 'default'}" th:value="${booking != null ? booking.bookingId : ''}" />
+            <input type="hidden" name="accountId" th:value="${accountId}" />
+            <input type="hidden" name="customer" th:value="${bookMode == 'create' ? accountId : (booking != null ? booking.customer : '')}" />
+
+
+            <!-- disable all fields if not in create or edit mode -->
+            <fieldset th:classappend="${!(bookMode eq 'create' or bookMode eq 'edit')} ? 'readonly'"
+                      th:attr="disabled=${!(bookMode eq 'create' or bookMode eq 'edit')}"
+            >
+
+                <div class="field">
+                    <label for="provider">Provider</label>
+                    <select id="provider" name="provider">
+                        <option value="">Select a provider</option>
+                        <option th:each="prov : ${providers}" th:value="${prov.key}" th:text="${prov.value}" th:selected="${booking != null and booking.provider == prov.key}"></option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="hourlyRate">Hourly Rate</label>
+                    <input id="hourlyRate" name="hourlyRate" type="number" step="0.25"
+                        th:value="${booking != null ? booking.hourlyRate : ''}"
+                    />
+                </div>
+
+                <div class="field">
+                    <label for="startTime">Start Time</label>
+                    <input id="startTime" name="startTime" type="datetime-local"
+                        th:value="${booking != null and booking.startTime != null ? #temporals.format(booking.startTime, 'yyyy-MM-dd''T''HH:mm') : ''}" />
+                </div>
+
+                <div class="field">
+                    <label for="endTime">End Time</label>
+                    <input id="endTime" name="endTime" type="datetime-local"
+                        th:value="${booking != null and booking.endTime != null ? #temporals.format(booking.endTime, 'yyyy-MM-dd''T''HH:mm') : ''}" />
+                </div>
+
+                <div class="field">
+                    <label for="locStreet">Street</label>
+                    <input id="locStreet" name="locStreet" type="text"
+                        th:value="${booking != null ? booking.locStreet : ''}" />
+                </div>
+
+                <div class="field">
+                    <label for="locCity">City</label>
+                    <input id="locCity" name="locCity" type="text"
+                    th:value="${booking != null ? booking.locCity : ''}" />
+                </div>
+
+                <div class="field">
+                    <label for="locState">State</label>
+                    <input id="locState" name="locState" type="text"
+                        th:value="${booking != null ? booking.locState : ''}" />
+                </div>
+
+                <div class="field">
+                    <label for="locZipCode">Zip Code</label>
+                    <input id="locZipCode" name="locZipCode" type="text"
+                        th:value="${booking != null ? booking.locZipCode : ''}"  />
+                </div>
+
+                <div class="field">
+                    <label for="completed">Completed</label>
+                    <span id="completed" th:text="${booking != null and booking.completed ? 'Yes' : 'No'}"></span>
+                </div>
+
+                <div class="field">
+                    <label for="overHours">Over/Under Hours</label>
+                    <span id="overHours" th:text="${booking != null ? booking.overHours : ''}"></span>
+                </div>
+
+                <div class="field">
+                    <label for="paid">Paid</label>
+                    <span id="paid" th:text="${booking != null and booking.paid ? 'Yes' : 'No'}"></span>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+</section>

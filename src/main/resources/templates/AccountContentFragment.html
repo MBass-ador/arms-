@@ -1,0 +1,85 @@
+<!--
+template fragment for ARMS application
+
+parent: accountFragment
+children: none
+
+version 4.0
+Author: Matthew Bass
+-->
+
+<section xmlns:th="http://www.thymeleaf.org" th:fragment="content(account)" class="content">
+
+    <form id="accountForm"  th:action="@{/accounts/update/{id}(id=${accountId})}"
+                            th:method="post">
+
+        <input type="hidden" name="accountId" th:value="${accountId}" />
+
+        <fieldset th:classappend="${!editMode} ? 'readonly'" th:attr="disabled=${!editMode}">
+
+            <div class="field">
+                <label for="screenName">screenName</label>
+                <input id="screenName" name="screenName" type="text"
+                       th:value="${account != null ? account.screenName : '' }" placeholder="screen name"/>
+            </div>
+
+            <div class="field">
+                <label for="password">password</label>
+                <input id="password" name="password" type="password"
+                       th:value="${account != null ? account.password : '' } " placeholder="password"/>
+            </div>
+
+            <div class="field">
+                <label for="firstName">firstName</label>
+                <input id="firstName" name="firstName" type="text"
+                       th:value="${account != null ? account.firstName : '' } " placeholder="first name"/>
+            </div>
+
+            <div class="field">
+                <label for="lastName">lastName</label>
+                <input id="lastName" name="lastName" type="text"
+                       th:value="${account != null ? account.lastName : '' } " placeholder="last name"/>
+            </div>
+
+            <div class="field">
+                <label for="phoneNumber">phone</label>
+                <input id="phoneNumber" name="phoneNumber" type="tel"
+                       th:value="${account != null ? account.phoneNumber : '' } " placeholder="phone"/>
+            </div>
+
+            <div class="field">
+                <label for="email">email</label>
+                <input id="email" name="email" type="email"
+                       th:value="${account != null ? account.email : '' } " placeholder="email"/>
+            </div>
+
+            <div class="field">
+                <label for="street">street</label>
+                <input id="street" name="street" type="text"
+                       th:value="${account != null ? account.street : '' } " placeholder="street"/>
+            </div>
+
+            <div class="field">
+                <label for="city">city</label>
+                <input id="city" name="city" type="text"
+                       th:value="${account != null ? account.city : '' } " placeholder="city"/>
+            </div>
+
+            <div class="field">
+                <label for="state">state</label>
+                <input id="state" name="state" type="text"
+                       th:value="${account != null ? account.state : '' } " placeholder="state"/>
+            </div>
+
+            <div class="field">
+                <label for="zipCode">zip</label>
+                <input id="zipCode" name="zipCode" type="text"
+                       th:value="${account != null ? account.zipCode : '' } " placeholder="zip"/>
+            </div>
+
+        </fieldset>
+
+    </form>
+
+</section>
+

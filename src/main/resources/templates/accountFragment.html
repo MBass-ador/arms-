@@ -1,0 +1,19 @@
+<!--
+template fragment for ARMS application
+
+parent: ArmsSPA
+children: AccountContentFragment, AccountButtonsFragment
+
+version 4.0
+Author: Matthew Bass
+-->
+
+<section th:fragment="account(accountId)" class="container">
+
+    <div class="content" th:replace="AccountContentFragment :: content(account=${account})">
+    </div>
+
+    <div class="buttons" th:replace="AccountButtonsFragment :: buttons(accountId=${accountId})">
+    </div>
+
+</section>

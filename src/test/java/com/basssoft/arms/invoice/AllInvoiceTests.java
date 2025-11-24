@@ -1,6 +1,6 @@
 package com.basssoft.arms.invoice;
 
-import com.basssoft.arms.invoice.controller.InvoiceControllerTest;
+import com.basssoft.arms.invoice.controller.InvoiceWebControllerTest;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 import com.basssoft.arms.invoice.service.InvoiceSvcTest;
@@ -10,12 +10,12 @@ import com.basssoft.arms.invoice.service.InvoiceSvcTest;
  *
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @Suite
 @SelectClasses({
         InvoiceSvcTest.class,
-        InvoiceControllerTest.class
+        InvoiceWebControllerTest.class
 })
 public class AllInvoiceTests {
 }

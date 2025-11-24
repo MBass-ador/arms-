@@ -1,6 +1,6 @@
 package com.basssoft.arms.account;
 
-import com.basssoft.arms.account.controller.AccountControllerTest;
+import com.basssoft.arms.account.controller.AccountWebControllerTest;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 import com.basssoft.arms.account.service.AccountSvcTest;
@@ -10,12 +10,12 @@ import com.basssoft.arms.account.service.AccountSvcTest;
  *
  * arms application
  * @author Matthew Bass
- * @version 1.0
+ * @version 2.0
  */
 @Suite
 @SelectClasses({
         AccountSvcTest.class,
-        AccountControllerTest.class
+        AccountWebControllerTest.class
 })
 public class AllAccountTests {
 
