@@ -245,39 +245,21 @@ public class InvoiceSvcTest {
     }
     
     /**
-     * Test method for {@link InvoiceSvcImpl#getAllInvoices()}.
+     * Test method for {@link InvoiceSvcImpl#getCustomerInvoices(int)}.
      */
     @Test
-    public void testGetAllInvoices() {
+    public void testGetCustomerInvoices() {
 
-        // first invoice for provider/customer (aggregates 2 bookings)
-        Invoice built1 = invoiceFactory.createInvoice(provider, customer);
-        InvoiceDTO created1 = service.createInvoice(service._entityToDto(built1));
-        assertNotNull(created1);
-        assertNotNull(created1.getInvoiceId());
+        // Create and persist invoices for both customers
+        InvoiceDTO invoice1 = service.createInvoice(service._entityToDto(invoiceFactory.createInvoice(provider, customer)));
+        InvoiceDTO invoice2 = service.createInvoice(service._entityToDto(invoiceFactory.createInvoice(altProvider, altCustomer)));
 
-        // second invoice for altProvider/altCustomer (3rd booking)
-        Invoice built2 = invoiceFactory.createInvoice(altProvider, altCustomer);
-        InvoiceDTO created2 = service.createInvoice(service._entityToDto(built2));
-        assertNotNull(created2);
-        assertNotNull(created2.getInvoiceId());
-
-        // fetch all and assert both persisted invoices are present and totals match
-        List<InvoiceDTO> invoices = service.getAllInvoices();
-        assertNotNull(invoices);
-        assertEquals(2, invoices.size(), "Expected exactly 2 invoices");
-
-        InvoiceDTO found1 = invoices.stream()
-                .filter(i -> created1.getInvoiceId().equals(i.getInvoiceId()))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Created invoice1 not found in getAllInvoices()"));
-        InvoiceDTO found2 = invoices.stream()
-                .filter(i -> created2.getInvoiceId().equals(i.getInvoiceId()))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Created invoice2 not found in getAllInvoices()"));
-
-        assertTrue(found1.getTotalAmountDue().compareTo(created1.getTotalAmountDue()) == 0);
-        assertTrue(found2.getTotalAmountDue().compareTo(created2.getTotalAmountDue()) == 0);
+        // Fetch invoices for 'customer'
+        List<InvoiceDTO> customerInvoices = service.getCustomerInvoices(customer.getAccountId());
+        assertNotNull(customerInvoices);
+        assertTrue(customerInvoices.stream().allMatch(i -> i.getCustomerId().equals(customer.getAccountId())));
+        assertTrue(customerInvoices.stream().anyMatch(i -> i.getInvoiceId().equals(invoice1.getInvoiceId())));
+        assertTrue(customerInvoices.stream().noneMatch(i -> i.getInvoiceId().equals(invoice2.getInvoiceId())));
     }
     
     /**

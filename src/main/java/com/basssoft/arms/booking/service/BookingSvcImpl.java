@@ -127,9 +127,9 @@ public class BookingSvcImpl implements IbookingService {
 
      * @return List<BookingDTO>
      */
-    public List<BookingDTO> getAllBookings() {
+    public List<BookingDTO> getCustomerBookings(int customerId) {
 
-        return repo.findAll()
+        return repo.findByCustomer_AccountId(customerId)
                 .stream()
                 .map(saved -> {
                     BookingDTO dto = mapper.map(saved, BookingDTO.class);

@@ -3,6 +3,8 @@ package com.basssoft.arms.account.service;
 import com.basssoft.arms.account.domain.Account;
 import com.basssoft.arms.account.domain.AccountDTO;
 import com.basssoft.arms.account.repository.AccountRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
+
 
 /**
  * Test class for {@link AccountSvcImpl}
@@ -29,13 +32,23 @@ public class AccountSvcTest {
     @Autowired
     private AccountRepository repo;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     /**
      * initializes test environment before each test
      */
     @BeforeEach
     public void setUp() {
-        repo.deleteAll();
+        entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM invoice_bookings").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM invoices").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM bookings").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM accounts").executeUpdate();
+        entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();
+        entityManager.flush();
     }
+
 
     /**
      *  helper method

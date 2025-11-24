@@ -1,0 +1,36 @@
+<!--
+template fragment for ARMS application
+
+parent: ArmsSPA
+children: InvoiceContentFragment, InvoicePayStubFragment,
+          InvoiceEmailStubFragment, InvoiceDisplayFragment
+
+version 4.0
+Author: Matthew Bass
+-->
+
+<section th:fragment="invoices(accountId, invoices, selectedInvoice, invoiceMode)" class="container">
+
+    <!-- pick content based on invoiceMode -->
+    <th:block th:if="${invoiceMode eq 'default'}">
+        <div class="content" th:replace="~{InvoiceContentFragment :: content(invoices=${invoices})}"></div>
+    </th:block>
+
+    <th:block th:if="${invoiceMode eq 'pay'}">
+        <div class="content" th:replace="~{InvoicePayStubFragment :: payStub}"></div>
+    </th:block>
+
+    <th:block th:if="${invoiceMode eq 'message'}">
+        <div class="content" th:replace="~{InvoiceEmailStubFragment :: emailStub}"></div>
+    </th:block>
+
+    <th:block th:if="${invoiceMode eq 'view'}">
+        <div class="content" th:replace="~{InvoiceDisplayFragment :: display(invoice=${selectedInvoice})}"></div>
+    </th:block>
+
+
+    <!-- always show buttons  -->
+    <div class="buttons" th:replace="~{InvoiceButtonsFragment
+                    :: buttons(accountId=${accountId}, invoiceMode=${invoiceMode})}"></div>
+
+</section>

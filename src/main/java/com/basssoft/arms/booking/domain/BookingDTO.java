@@ -25,6 +25,9 @@ public class BookingDTO {
     private Integer provider;
     private Integer customer;
 
+    private String providerName;
+    private String customerName;
+
     private BigDecimal hourlyRate;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

@@ -1,0 +1,48 @@
+<!--
+template fragment for ARMS application
+
+parent: invoiceFragment
+children: none
+
+version 4.0
+Author: Matthew Bass
+-->
+
+<section xmlns:th="http://www.thymeleaf.org" th:fragment="display(invoice)" class="invoice-display">
+
+    <div class="invoice-content">
+
+        <div class="field mb-3">
+            <label>Invoice ID</label>
+            <div th:text="${invoice.invoiceId}"></div>
+        </div>
+
+        <div class="field mb-3">
+            <label>Provider ID</label>
+            <div th:text="${invoice.providerId}"></div>
+        </div>
+
+        <div class="field mb-3">
+            <label>Customer ID</label>
+            <div th:text="${invoice.customerId}"></div>
+        </div>
+
+        <div class="field mb-3">
+            <label>Booking IDs</label>
+            <div>
+                <span th:each="id : ${invoice.bookingIds}" class="badge bg-secondary me-1" th:text="${id}"></span>
+            </div>
+        </div>
+
+        <div class="field mb-3">
+            <label>Total Amount Due</label>
+            <div th:text="${invoice.totalAmountDue}"></div>
+        </div>
+
+        <div class="field mb-3">
+            <label>Last Contacted</label>
+            <div th:text="${invoice.lastContacted}"></div>
+        </div>
+    </div>
+
+</section>

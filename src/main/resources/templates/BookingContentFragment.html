@@ -1,0 +1,21 @@
+<!--
+template fragment for ARMS application
+
+parent: bookingFragment
+children: BookingListItemFragment
+
+version 4.0
+Author: Matthew Bass
+-->
+
+<section th:fragment="content(bookings)" class="content">
+
+    <div class="list-group" style="max-height: 400px; overflow-y: auto;">
+
+    <div th:each="booking : ${bookings}">
+        <section th:replace="~{BookingListItemFragment :: listItem(booking=${booking})}"></section>
+    </div>
+</div>
+
+
+</section>

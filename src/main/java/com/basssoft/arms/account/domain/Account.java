@@ -25,9 +25,10 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
+    @Column(name = "account_id", nullable = false)
     private Integer accountId;
 
-    @Column(nullable = false, unique = true, length = 24)
+    @Column(name = "screen_name", nullable = false, unique = true, length = 24)
     private String screenName;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -38,16 +39,16 @@ public class Account {
     @Column(nullable = false)
     private boolean provider;
 
-    @Column(nullable = false, length = 24)
+    @Column(name= "first_name", nullable = false, length = 24)
     private String firstName;
 
-    @Column(nullable = false, length = 24)
+    @Column(name= "last_name", nullable = false, length = 24)
     private String lastName;
 
     @Column(nullable = false, unique = true, length = 48)
     private String email;
 
-    @Column(nullable = false, length = 15)
+    @Column(name= "phone_number", nullable = false, length = 15)
     private String phoneNumber;
 
     @Column(nullable = false, length = 24)
@@ -59,6 +60,6 @@ public class Account {
     @Column(nullable = false, length = 24)
     private String state;
 
-    @Column(nullable = false, length = 10)
+    @Column(name= "zip_code", nullable = false, length = 10)
     private String zipCode;
 }

@@ -1,0 +1,23 @@
+<!--
+template fragment for ARMS application
+
+parent: InvoiceFragment
+children: InvoiceListItemFragment
+
+version 4.0
+Author: Matthew Bass
+-->
+
+<section th:fragment="content(invoices)" class="content">
+
+    <div class="list-group" style="max-height: 400px; overflow-y: auto;">
+
+        <div th:each="invoice : ${invoices}">
+
+            <section th:replace="~{InvoiceListItemFragment :: listItem(invoice=${invoice})}"></section>
+
+        </div>
+
+    </div>
+
+</section>

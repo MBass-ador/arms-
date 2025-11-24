@@ -1,0 +1,63 @@
+<!--
+template fragment for ARMS application
+
+parent: InvoiceContentFragment
+children: none
+
+version 4.0
+Author: Matthew Bass
+-->
+
+<section th:fragment="listItem(invoice)" class="scrollable-list-item">
+
+    <form th:action="@{/invoices/view/{id}(id=${invoice.invoiceId})}" method="get" style="width:100%">
+
+        <button type="submit" class="list-group-item list-group-item-action" style="width:100%; text-align:left;">
+
+            <!-- Line 1: Invoice ID and Total Due -->
+            <div style="display: flex; gap: 2rem;">
+
+                <div style="flex:1;">
+                    <span class="list-label">Invoice ID</span><br>
+                    <span th:text="${invoice.invoiceId}">ID</span>
+                </div>
+
+                <div style="flex:1;">
+                    <span class="list-label">Total Due</span><br>
+                    <span th:text="${invoice.totalAmountDue}">0.00</span>
+                </div>
+
+            </div>
+
+            <!-- Line 2: Customer and Provider -->
+            <div style="display: flex; gap: 2rem;">
+
+                <div style="flex:1;">
+                    <span class="list-label">Customer</span><br>
+                    <span th:text="${invoice.customerId}">Customer</span>
+                </div>
+
+                <div style="flex:1;">
+                    <span class="list-label">Provider</span><br>
+                    <span th:text="${invoice.providerId}">Provider</span>
+                </div>
+
+            </div>
+
+            <!-- Line 3: Booking IDs -->
+            <div style="display: flex; gap: 2rem;">
+
+                <div style="flex:1;">
+                    <span class="list-label">Bookings</span><br>
+                    <span th:text="${#lists.isEmpty(invoice.bookingIds)
+                                    ? 'None' : #strings.listJoin(invoice.bookingIds, ', ')}">0</span>
+
+                </div>
+
+            </div>
+
+        </button>
+
+    </form>
+
+</section>

@@ -15,7 +15,10 @@ import java.util.List;
  */
 public interface BookingRepository extends JpaRepository<Booking,Integer> {
 
-    // used by Invoice Service
-    // to find unpaid completed bookings between provider/customer
+    // used by Booking Service to retrieve all bookings for a customer
+    List<Booking> findByCustomer_AccountId(int accountId);
+
+    // used by Invoice Service Factory to generate Invoices
+    // finds unpaid/completed bookings between provider/customer
     List<Booking> findByProviderAndCustomerAndCompletedTrueAndPaidFalse(Account provider, Account customer);
 }

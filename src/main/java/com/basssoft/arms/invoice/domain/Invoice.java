@@ -4,6 +4,9 @@ import com.basssoft.arms.account.domain.Account;
 import com.basssoft.arms.booking.domain.Booking;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,27 +31,36 @@ public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
+    @Column(name = "invoice_id", nullable = false)
     private Integer invoiceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "provider_id", referencedColumnName = "account_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     private Account provider;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", referencedColumnName = "account_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     private Account customer;
 
     // all unpaid bookings between
     // this provider and this customer
-    @Transient
-    @ToString.Exclude
+    @ManyToMany
+    @JoinTable(
+            name = "invoice_bookings",
+            joinColumns = @JoinColumn(name = "invoice_id"),
+            inverseJoinColumns = @JoinColumn(name = "booking_id")
+    )
     private List<Booking> bookings = new ArrayList<>();
 
-    @Column(precision = 20, scale = 2, nullable = false)
+    @Column(name = "total_amount_due", precision = 20, scale = 2, nullable = false)
     private BigDecimal totalAmountDue = BigDecimal.ZERO;
 
     // timestamp of last attempt to collect
-    @Column
+    @Column(name = "last_contacted")
     private LocalDateTime lastContacted;
 
 

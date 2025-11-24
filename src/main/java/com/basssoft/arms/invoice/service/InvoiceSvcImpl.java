@@ -92,9 +92,9 @@ public class InvoiceSvcImpl implements IinvoiceService {
      * @return List<InvoiceDTO> invoices
      */
     @Override
-    public List<InvoiceDTO> getAllInvoices() {
+    public List<InvoiceDTO> getCustomerInvoices(int customerId) {
 
-        return invoiceRepo.findAll().stream()
+        return invoiceRepo.findByCustomer_AccountId(customerId).stream()
                 .map(this::_entityToDto)
                 .filter(java.util.Objects::nonNull)
                 .collect(java.util.stream.Collectors.toList());
@@ -202,12 +202,15 @@ public class InvoiceSvcImpl implements IinvoiceService {
      * @return InvoiceDTO
      */
     InvoiceDTO _entityToDto(Invoice entity) {
+
         // null check
         if (entity == null) return null;
+
         // new dto
         InvoiceDTO dto = new InvoiceDTO();
+
         // copy simple properties but skip account objects
-        BeanUtils.copyProperties(entity, dto, "provider", "customer");
+        org.springframework.beans.BeanUtils.copyProperties(entity, dto, "provider", "customer", "bookings");
 
         // expose provider/customer ids on DTO if present
         if (entity.getProvider() != null) {
@@ -215,6 +218,14 @@ public class InvoiceSvcImpl implements IinvoiceService {
         }
         if (entity.getCustomer() != null) {
             dto.setCustomerId(entity.getCustomer().getAccountId());
+        }
+        // map bookings to bookingIds
+        if (entity.getBookings() != null) {
+            dto.setBookingIds(
+                    entity.getBookings().stream()
+                            .map(booking -> booking.getBookingId())
+                            .collect(java.util.stream.Collectors.toList())
+            );
         }
         return dto;
     }

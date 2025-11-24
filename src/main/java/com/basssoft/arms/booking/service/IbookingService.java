@@ -32,7 +32,7 @@ public interface IbookingService {
      *
      * @return List<BookingDTO>
      */
-    public List<BookingDTO> getAllBookings();
+    public List<BookingDTO> getCustomerBookings(int customerId);
 
     /**
      * Update existing Booking

@@ -31,9 +31,10 @@ public interface IinvoiceService {
     /**
      * Get all Invoices
 
+     * @param customerId int - the customer ID to get invoices for
      * @return List<InvoiceDTO>
      */
-    public List<InvoiceDTO> getAllInvoices();
+    public List<InvoiceDTO> getCustomerInvoices(int customerId);
 
     /**
      * Update existing Invoice

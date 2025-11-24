@@ -1,0 +1,92 @@
+<!--
+template fragment for ARMS application
+
+parent: BookingContentFragment
+children: none
+
+version 4.0
+Author: Matthew Bass
+-->
+
+
+
+<section th:fragment="listItem(booking)" class="scrollable-list-item">
+
+
+
+    <form th:action="@{/bookings/view/{id}(id=${booking.bookingId})}" method="get" style="width:100%">
+
+        <button type="submit" class="list-group-item list-group-item-action" style="width:100%; text-align:left;">
+
+
+            <div style="display: flex; gap: 2rem;">
+                <div style="flex:1;">
+
+                    <span class="list-label">Provider</span><br>
+
+                    <span th:text="${booking.providerName}">Provider</span>
+                </div>
+
+                <div style="flex:1;">
+                    <span class="list-label">Customer</span><br>
+
+                    <span th:text="${booking.customerName}">Customer</span>
+                </div>
+            </div>
+
+
+            <div style="display: flex; gap: 2rem;">
+                <div style="flex:1;">
+                    <span class="list-label">Start</span><br>
+
+                    <span th:text="${booking.startTime != null ? #temporals.format(booking.startTime,
+                            'yyyy-MM-dd HH:mm') : 'N/A'}"></span>
+
+                    </span>
+
+                </div>
+
+                <div style="flex:1;">
+
+                    <span class="list-label">End</span><br>
+
+                    <span th:text="${booking.endTime != null ? #temporals.format(booking.endTime,
+                            'yyyy-MM-dd HH:mm') : 'N/A'}"></span>
+
+                </div>
+            </div>
+
+
+            <div style="display: flex; gap: 1rem;">
+                <div>
+                    <span class="list-label">Street</span><br>
+
+                    <span th:text="${booking.locStreet}">Street</span>
+                </div>
+
+                <div>
+                    <span class="list-label">City</span><br>
+
+                    <span th:text="${booking.locCity}">City</span>
+                </div>
+
+                <div>
+                    <span class="list-label">State</span><br>
+
+                    <span th:text="${booking.locState}">State</span>
+                </div>
+
+                <div>
+                    <span class="list-label">Zip</span><br>
+
+                    <span th:text="${booking.locZipCode}">Zip</span>
+                </div>
+            </div>
+
+
+        </button>
+
+    </form>
+
+
+</section>

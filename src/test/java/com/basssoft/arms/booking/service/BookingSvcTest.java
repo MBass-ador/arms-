@@ -6,6 +6,8 @@ import com.basssoft.arms.account.repository.AccountRepository;
 import com.basssoft.arms.account.service.AccountSvcImpl;
 import com.basssoft.arms.booking.domain.BookingDTO;
 import com.basssoft.arms.booking.repository.BookingRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,13 +42,21 @@ public class BookingSvcTest {
     @Autowired
     AccountRepository accountRepo;
 
+    @PersistenceContext
+    private EntityManager em;
+
     /**
      * sets up the test environment before each test
      */
     @BeforeEach
     public void setUp()  {
-        repo.deleteAll();
-        accountRepo.deleteAll();
+        em.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
+        em.createNativeQuery("DELETE FROM invoice_bookings").executeUpdate();
+        em.createNativeQuery("DELETE FROM invoices").executeUpdate();
+        em.createNativeQuery("DELETE FROM bookings").executeUpdate();
+        em.createNativeQuery("DELETE FROM accounts").executeUpdate();
+        em.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();
+        em.flush();
     }
 
 
@@ -172,19 +182,26 @@ public class BookingSvcTest {
 
 
     /**
-     * Test method for {@link BookingSvcImpl#getAllBookings()}.
+     * Test method for {@link BookingSvcImpl#getCustomerBookings(int)}.
      */
     @Test
-    public void testGetAllBookings() {
-        // persist two bookings
-        service.createBooking(validDto());
-        BookingDTO secondDTO = validDto();
-        service.createBooking(validDto());
-        // retrieve all bookings
-        List<BookingDTO> bookings = service.getAllBookings();
+    public void testGetCustomerBookings() {
+        // persist two bookings for the same customer
+        BookingDTO booking1 = validDto();
+        BookingDTO booking2 = validDto();
+        service.createBooking(booking1);
+        service.createBooking(booking2);
+
+        // retrieve bookings for customer
+        int customerId = booking1.getCustomer();
+        List<BookingDTO> bookings = service.getCustomerBookings(customerId);
+
         // verify
         assertNotNull(bookings);
         assertEquals(2, bookings.size());
+        for (BookingDTO dto : bookings) {
+            assertEquals(customerId, dto.getCustomer());
+        }
     }
 
 
