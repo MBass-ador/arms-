@@ -32,23 +32,6 @@ public class AccountSvcTest {
     @Autowired
     private AccountRepository repo;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    /**
-     * initializes test environment before each test
-     */
-    @BeforeEach
-    public void setUp() {
-        entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM invoice_bookings").executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM invoices").executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM bookings").executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM accounts").executeUpdate();
-        entityManager.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();
-        entityManager.flush();
-    }
-
 
     /**
      *  helper method
@@ -76,12 +59,26 @@ public class AccountSvcTest {
      */
     @Test
     public void testCreateAccount() {
-        AccountDTO dto = validDto();
+        // create dto
+        AccountDTO dto = new AccountDTO();
+        dto.setScreenName("testuser");
+        dto.setPassword("password");
+        dto.setProvider(false);
+        dto.setFirstName("Test");
+        dto.setLastName("User");
+        dto.setEmail("tuser@example.com");
+        dto.setPhoneNumber("555-0100");
+        dto.setStreet("1 Test Way");
+        dto.setCity("Testville");
+        dto.setState("TS");
+        dto.setZipCode("12345");
+        // call create
         AccountDTO result = service.createAccount(dto);
+        // verify returned dto
         assertNotNull(result);
         assertNotNull(result.getAccountId());
         assertEquals(dto.getScreenName(), result.getScreenName());
-        // verify persisted in repo
+        // verify persisted correctly
         Optional<Account> persisted = repo.findById(result.getAccountId());
         assertTrue(persisted.isPresent());
         assertEquals(result.getScreenName(), persisted.get().getScreenName());
@@ -89,16 +86,32 @@ public class AccountSvcTest {
 
 
     /**
+     * Test method for {@link AccountSvcImpl#getAccountByScreenName(String)}.
+     */
+    @Test
+    public void testGetAccountByScreenName() {
+
+        // call method
+        AccountDTO fetched = service.getAccountByScreenName("alice");
+        // verify returned dto
+        assertNotNull(fetched);
+        assertEquals("alice", fetched.getScreenName());
+    }
+
+
+
+    /**
      * Test method for {@link AccountSvcImpl#getAccount(int)}.
      */
     @Test
     public void testGetAccountById() {
-        AccountDTO created = service.createAccount(validDto());
-        assertNotNull(created.getAccountId());
-        AccountDTO fetched = service.getAccount(created.getAccountId());
+        AccountDTO alice = service.getAccountByScreenName("alice");
+        assertNotNull(alice);
+        int id = alice.getAccountId();
+
+        AccountDTO fetched = service.getAccount(id);
         assertNotNull(fetched);
-        assertEquals(created.getAccountId(), fetched.getAccountId());
-        assertEquals(created.getEmail(), fetched.getEmail());
+        assertEquals("alice", fetched.getScreenName());
     }
 
 
@@ -107,19 +120,18 @@ public class AccountSvcTest {
      */
     @Test
     public void testGetAllAccounts() {
-        // verify empty at start
-        List<AccountDTO> empty = service.getAllAccounts();
-        assertNotNull(empty);
-        assertTrue(empty.isEmpty());
-        // persist two accounts
-        service.createAccount(validDto());
-        AccountDTO dto2 = validDto();
-        dto2.setScreenName("tester2");
-        dto2.setEmail("tester2@example.com");
-        service.createAccount(dto2);
-        // verify get all returns two
+
+        // call method
         List<AccountDTO> all = service.getAllAccounts();
-        assertEquals(2, all.size());
+        assertNotNull(all);
+
+        // import.sql inserts 5 accounts: alice, bob, clara, derek, ernest
+        assertTrue(all.size() >= 5);
+        assertTrue(all.stream().anyMatch(a -> "alice".equals(a.getScreenName())));
+        assertTrue(all.stream().anyMatch(a -> "bob".equals(a.getScreenName())));
+        assertTrue(all.stream().anyMatch(a -> "clara".equals(a.getScreenName())));
+        assertTrue(all.stream().anyMatch(a -> "derek".equals(a.getScreenName())));
+        assertTrue(all.stream().anyMatch(a -> "ernest".equals(a.getScreenName())));
     }
 
 
@@ -128,21 +140,21 @@ public class AccountSvcTest {
      */
     @Test
     public void testUpdateAccount() {
-        // save account to db
-        AccountDTO created = service.createAccount(validDto());
-        assertNotNull(created.getAccountId());
-        // update fields in retrieved dto
-        created.setFirstName("Updated");
-        created.setLastName("Name");
-        // call update to persist changes
-        AccountDTO updated = service.updateAccount(created);
+        // fetch existing account from import.sql
+        AccountDTO alice = service.getAccountByScreenName("alice");
+        assertNotNull(alice);
+        // update fields
+        alice.setFirstName("Updated");
+        alice.setLastName("Name");
+        // call update
+        AccountDTO updated = service.updateAccount(alice);
         // verify returned dto
         assertNotNull(updated);
-        assertEquals(created.getAccountId(), updated.getAccountId());
+        assertEquals(alice.getAccountId(), updated.getAccountId());
         assertEquals("Updated", updated.getFirstName());
         assertEquals("Name", updated.getLastName());
         // verify persisted
-        Optional<com.basssoft.arms.account.domain.Account> persisted = repo.findById(updated.getAccountId());
+        Optional<Account> persisted = repo.findById(updated.getAccountId());
         assertTrue(persisted.isPresent());
         assertEquals("Updated", persisted.get().getFirstName());
     }
@@ -153,15 +165,15 @@ public class AccountSvcTest {
      */
     @Test
     public void testDeleteAccount() {
-        // save account to db
-        AccountDTO created = service.createAccount(validDto());
-        assertNotNull(created.getAccountId());
+        // get existing account
+        AccountDTO bob = service.getAccountByScreenName("bob");
+        assertNotNull(bob);
         // call delete
-        int result = service.deleteAccount(created.getAccountId());
+        int result = service.deleteAccount(bob.getAccountId());
         // verify return value
-        assertEquals(created.getAccountId(), result);
+        assertEquals(bob.getAccountId(), result);
         // verify deleted from repo
-        assertFalse(repo.findById(created.getAccountId()).isPresent());
+        assertFalse(repo.findById(bob.getAccountId()).isPresent());
     }
 
 }

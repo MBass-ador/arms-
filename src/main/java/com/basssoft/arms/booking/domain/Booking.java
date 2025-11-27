@@ -34,12 +34,10 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "provider_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Account provider;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Account customer;
 
     @Column(name = "hourly_rate", nullable = false, precision = 10, scale = 2)

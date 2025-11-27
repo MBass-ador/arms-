@@ -62,6 +62,19 @@ public class AccountSvcImpl implements IaccountService {
     }
 
 
+    /**
+     *  get Account dto by Screen Name
+
+     * @param screenName String
+     * @return AccountDTO
+     */
+    public AccountDTO getAccountByScreenName(String screenName) {
+        if (screenName == null) return null;
+        Optional<Account> opt = repo.findByScreenName(screenName);
+        return opt.map(this::entityToDto).orElse(null);
+    }
+
+
     /** Get all Accounts
 
      * @return List<AccountDTO> (empty list right now)

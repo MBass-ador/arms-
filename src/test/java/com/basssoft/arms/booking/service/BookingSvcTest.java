@@ -42,23 +42,6 @@ public class BookingSvcTest {
     @Autowired
     AccountRepository accountRepo;
 
-    @PersistenceContext
-    private EntityManager em;
-
-    /**
-     * sets up the test environment before each test
-     */
-    @BeforeEach
-    public void setUp()  {
-        em.createNativeQuery("SET REFERENTIAL_INTEGRITY FALSE").executeUpdate();
-        em.createNativeQuery("DELETE FROM invoice_bookings").executeUpdate();
-        em.createNativeQuery("DELETE FROM invoices").executeUpdate();
-        em.createNativeQuery("DELETE FROM bookings").executeUpdate();
-        em.createNativeQuery("DELETE FROM accounts").executeUpdate();
-        em.createNativeQuery("SET REFERENTIAL_INTEGRITY TRUE").executeUpdate();
-        em.flush();
-    }
-
 
     /**
      *  helper method
@@ -154,13 +137,34 @@ public class BookingSvcTest {
      */
     @Test
     public void testCreateBooking() {
-        // create dto
-        BookingDTO bookingDTO = validDto();
-        // persist booking
-        BookingDTO result = service.createBooking(bookingDTO);
+        // Use provider "clara" (id=3) and customer "alice" (id=1) from import.sql
+        Account provider = accountRepo.findAll().stream()
+                .filter(a -> "clara".equals(a.getScreenName()))
+                .findFirst().orElseThrow();
+        Account customer = accountRepo.findAll().stream()
+                .filter(a -> "alice".equals(a.getScreenName()))
+                .findFirst().orElseThrow();
+        // build booking dto
+        BookingDTO dto = new BookingDTO();
+        dto.setProvider(provider.getAccountId());
+        dto.setCustomer(customer.getAccountId());
+        dto.setHourlyRate(new BigDecimal("75.00"));
+        dto.setStartTime(LocalDateTime.of(2025, 8, 1, 9, 0));
+        dto.setEndTime(LocalDateTime.of(2025, 8, 1, 11, 0));
+        dto.setLocStreet("123 Test St");
+        dto.setLocCity("Springfield");
+        dto.setLocState("IL");
+        dto.setLocZipCode("62701");
+        dto.setCompleted(false);
+        dto.setOverHours(BigDecimal.ZERO);
+        dto.setPaid(false);
+        // call create
+        BookingDTO result = service.createBooking(dto);
         // verify
         assertNotNull(result);
         assertNotNull(result.getBookingId());
+        assertEquals(provider.getAccountId(), result.getProvider());
+        assertEquals(customer.getAccountId(), result.getCustomer());
     }
 
 
@@ -169,15 +173,28 @@ public class BookingSvcTest {
      */
     @Test
     public void testGetBookingById() {
-        // persist booking
-        BookingDTO created = service.createBooking(validDto());
-        // verify created
-        assertNotNull(created.getBookingId());
-        // retrieve booking by id
-        BookingDTO booking = service.getBooking(created.getBookingId());
-        // verify
-        assertNotNull(booking);
-        assertEquals(created.getBookingId(), booking.getBookingId());
+        // find provider "clara", customer "alice"
+        Account provider = accountRepo.findAll().stream()
+                .filter(a -> "clara".equals(a.getScreenName()))
+                .findFirst().orElseThrow();
+        Account customer = accountRepo.findAll().stream()
+                .filter(a -> "alice".equals(a.getScreenName()))
+                .findFirst().orElseThrow();
+
+        // find  booking between them
+        var booking = repo.findAll().stream()
+                .filter(b -> b.getProvider().getAccountId().equals(provider.getAccountId()) &&
+                        b.getCustomer().getAccountId().equals(customer.getAccountId()))
+                .findFirst().orElseThrow();
+
+        // call method with that booking's id
+        BookingDTO retrieved = service.getBooking(booking.getBookingId());
+
+        // Verify
+        assertNotNull(retrieved);
+        assertEquals(booking.getBookingId(), retrieved.getBookingId());
+        assertEquals(provider.getAccountId(), retrieved.getProvider());
+        assertEquals(customer.getAccountId(), retrieved.getCustomer());
     }
 
 
@@ -186,21 +203,19 @@ public class BookingSvcTest {
      */
     @Test
     public void testGetCustomerBookings() {
-        // persist two bookings for the same customer
-        BookingDTO booking1 = validDto();
-        BookingDTO booking2 = validDto();
-        service.createBooking(booking1);
-        service.createBooking(booking2);
+        // customer "alice" (id=1) from import.sql
+        Account customer = accountRepo.findAll().stream()
+                .filter(a -> "alice".equals(a.getScreenName()))
+                .findFirst().orElseThrow();
 
-        // retrieve bookings for customer
-        int customerId = booking1.getCustomer();
-        List<BookingDTO> bookings = service.getCustomerBookings(customerId);
+        // call method
+        List<BookingDTO> bookings = service.getCustomerBookings(customer.getAccountId());
 
-        // verify
+        // assert 4 bookings for alice in import.sql
         assertNotNull(bookings);
-        assertEquals(2, bookings.size());
+        assertEquals(4, bookings.size());
         for (BookingDTO dto : bookings) {
-            assertEquals(customerId, dto.getCustomer());
+            assertEquals(customer.getAccountId(), dto.getCustomer());
         }
     }
 
@@ -210,19 +225,34 @@ public class BookingSvcTest {
      */
     @Test
     public void testUpdateBooking() {
-        // create and persist booking
-        BookingDTO created = service.createBooking(validDto());
-        assertNotNull(created.getBookingId());
-        // update some fields
-        created.setHourlyRate(new BigDecimal("80.00"));
-        created.setCompleted(true);
-        // call update
-        BookingDTO result = service.updateBooking(created);
-        // verify
-        assertNotNull(result);
-        assertEquals(created.getBookingId(), result.getBookingId());
-        assertEquals(new BigDecimal("80.00"), result.getHourlyRate());
-        assertTrue(result.isCompleted());
+        // get existing booking for provider "clara" and customer "alice"
+        Account provider = accountRepo.findAll().stream()
+                .filter(a -> "clara".equals(a.getScreenName()))
+                .findFirst().orElseThrow();
+        Account customer = accountRepo.findAll().stream()
+                .filter(a -> "alice".equals(a.getScreenName()))
+                .findFirst().orElseThrow();
+
+        var booking = repo.findAll().stream()
+                .filter(b -> b.getProvider().getAccountId().equals(provider.getAccountId()) &&
+                        b.getCustomer().getAccountId().equals(customer.getAccountId()))
+                .findFirst().orElseThrow();
+
+        // convert to dto
+        BookingDTO dto = service.getBooking(booking.getBookingId());
+
+        // update
+        dto.setStartTime(LocalDateTime.of(2025, 10, 1, 9, 0));
+        dto.setProvider(4);
+
+        // Call update
+        BookingDTO updated = service.updateBooking(dto);
+
+        // Verify
+        assertNotNull(updated);
+        assertEquals(dto.getBookingId(), updated.getBookingId());
+        assertEquals(4, updated.getProvider());
+        assertEquals(LocalDateTime.of(2025, 10, 1, 9, 0), updated.getStartTime());
     }
 
 
@@ -231,17 +261,15 @@ public class BookingSvcTest {
      */
     @Test
     public void testDeleteBooking() {
-        // persist a booking
-        BookingDTO created = service.createBooking(validDto());
-        // verify created
-        assertNotNull(created.getBookingId());
-        // delete booking
-        int result = service.deleteBooking(created.getBookingId());
-        // verify response
-        assertEquals(created.getBookingId(), result);
-        // make sure it's gone
-        BookingDTO deleted = service.getBooking(created.getBookingId());
-        assertNull(deleted);
+
+        // 1st booking in import.sql not referenced by any invoice
+        // they start with id=1001
+        int bookingId = 1001;
+        // call method
+        int result = service.deleteBooking(bookingId);
+        // assert deletion
+        assertEquals(bookingId, result);
+        assertNull(service.getBooking(bookingId));
     }
 
 }

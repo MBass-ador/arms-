@@ -4,6 +4,7 @@ import com.basssoft.arms.invoice.domain.InvoiceDTO;
 import com.basssoft.arms.invoice.service.IinvoiceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Matthew Bass
  * @version 4.0
  */
+@Transactional
 public class InvoiceWebControllerTest {
 
     private IinvoiceService invoiceService;

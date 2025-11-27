@@ -1,22 +1,21 @@
 package com.basssoft.arms.invoice.service;
 
-import com.basssoft.arms.account.domain.Account;
 import com.basssoft.arms.booking.domain.Booking;
 import com.basssoft.arms.booking.repository.BookingRepository;
 import com.basssoft.arms.invoice.domain.Invoice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
-import java.util.List;
-
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 /**
  * Factory Service
  * for Invoice creation
- *
+
  * arms application
  * @author Matthew Bass
  * @version 1.0
@@ -25,38 +24,39 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InvoiceFactory {
 
-    private final BookingRepository bookingRepository;
+    private final BookingRepository bookingRepo;
 
     /**
      * Create Invoice from unpaid Bookings
      *
-     * @param provider Account
-     * @param customer Account
-     * @return Invoice
+     * @param providerId int
+     * @param customerId int
+     * @return Invoice Mono
      */
-    public Invoice createInvoice (Account provider, Account customer) {
+    public Mono<Invoice> generateInvoice (int providerId, int customerId) {
 
-        // get all unpaid bookings for provider/customer
-        List<Booking> unpaidBookings = bookingRepository
-                .findByProviderAndCustomerAndCompletedTrueAndPaidFalse(provider, customer);
+        return Mono.fromCallable(() ->
+                        bookingRepo.findByProvider_AccountIdAndCustomer_AccountIdAndCompletedTrueAndPaidFalse(providerId, customerId))
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(bookings -> {
+                    if (bookings == null || bookings.isEmpty()) {
+                        return Mono.empty();
+                    }
 
-        // create invoice
-        Invoice invoice = new Invoice();
+            Invoice invoice = new Invoice();
+            invoice.setProvider(bookings.get(0).getProvider());
+            invoice.setCustomer(bookings.get(0).getCustomer());
+            invoice.setBookings(bookings);
 
-        // set fields
-        invoice.setProvider(provider);
-        invoice.setCustomer(customer);
-        invoice.setBookings(unpaidBookings);
+            BigDecimal totalAmountDue = bookings.stream()
+                    .map(this::_lineAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+                    .setScale(2, RoundingMode.HALF_UP);
 
-        // calculate total amount due
-        BigDecimal totalAmountDue = unpaidBookings.stream()
-                .map(this::_lineAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(2, RoundingMode.HALF_UP);
+            invoice.setTotalAmountDue(totalAmountDue);
+            return Mono.just(invoice);
 
-        invoice.setTotalAmountDue(totalAmountDue);
-
-        return invoice;
+        });
     }
 
 
@@ -105,5 +105,21 @@ public class InvoiceFactory {
         // multiply by hourly rate
         return hourlyRate.multiply(totalHours);
     }
+
+
+    /**
+     * Get unpaid Customer Account IDs for Provider
+     * calls custom BookingRepository query
+     *
+     * @param providerId int
+     * @return Flux<Integer> of Customer Account IDs
+     */
+    public Flux<Integer> unpaidCustomerAccounts(int providerId) {
+
+        return Mono.fromCallable(() -> bookingRepo.findDistinctCustomer_AccountIdByProvider_AccountIdAndCompletedTrueAndPaidFalse(providerId))
+                .flatMapMany(Flux::fromIterable)
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
 
 }

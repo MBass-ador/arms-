@@ -12,13 +12,7 @@ import java.util.List;
  */
 public interface IinvoiceService {
 
-    /**
-     * Create new Invoice
 
-     * @param account InvoiceDTO
-     * @return InvoiceDTO
-     */
-    public InvoiceDTO createInvoice(InvoiceDTO account);
 
     /**
      * Get Invoice by ID
@@ -36,19 +30,4 @@ public interface IinvoiceService {
      */
     public List<InvoiceDTO> getCustomerInvoices(int customerId);
 
-    /**
-     * Update existing Invoice
-
-     * @param account InvoiceDTO
-     * @return InvoiceDTO
-     */
-    public InvoiceDTO updateInvoice(InvoiceDTO account);
-
-    /**
-     * Delete Invoice by ID
-
-     * @param invoiceId int
-     * @return int deletedId
-     */
-    public int deleteInvoice(int invoiceId);
 }

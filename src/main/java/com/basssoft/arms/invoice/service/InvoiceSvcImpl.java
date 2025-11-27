@@ -43,29 +43,6 @@ public class InvoiceSvcImpl implements IinvoiceService {
 
 
     /**
-     * Create new Invoice
-
-     * @param invoice InvoiceDTO
-     * @return InvoiceDTO
-     */
-    @Override
-    public InvoiceDTO createInvoice(InvoiceDTO invoice) {
-
-        // null check
-        if (invoice == null) return null;
-
-        // convert dto to entity
-        Invoice entity = _dtoToEntity(invoice);
-
-        // persist
-        Invoice saved = invoiceRepo.save(entity);
-
-        // convert back to dto and return
-        return _entityToDto(saved);
-    }
-
-
-    /**
      * Get Invoice by ID
 
      * @param invoiceId int
@@ -102,66 +79,10 @@ public class InvoiceSvcImpl implements IinvoiceService {
 
 
 
-    /**
-     * Update existing Invoice
-
-     * @param account InvoiceDTO
-     * @return InvoiceDTO
-     */
-    @Override
-    public InvoiceDTO updateInvoice(InvoiceDTO account) {
-
-        // null check
-        if (account == null || account.getInvoiceId() == null) return null;
-
-        // find existing by id
-        Optional<Invoice> opt = invoiceRepo.findById(account.getInvoiceId());
-        if (!opt.isPresent()) return null;
-
-        // get existing invoice
-        Invoice existing = opt.get();
-
-        // copy simple properties but skip id and account references
-        BeanUtils.copyProperties(account, existing, "invoiceId", "provider", "customer");
-
-        // update provider/customer refs (set null when no id)
-        if (account.getProviderId() != null) {
-            existing.setProvider(accountRepo.getReferenceById(account.getProviderId()));
-        } else {
-            existing.setProvider(null);
-        }
-        if (account.getCustomerId() != null) {
-            existing.setCustomer(accountRepo.getReferenceById(account.getCustomerId()));
-        } else {
-            existing.setCustomer(null);
-        }
-        // persist updates
-        Invoice saved = invoiceRepo.save(existing);
-
-        // convert back to dto and return
-        return _entityToDto(saved);
-    }
 
 
-    /**
-     * Delete Invoice by ID
 
-     * @param invoiceId int
-     * @return int deletedId
-     */
-    @Override
-    public int deleteInvoice(int invoiceId) {
 
-        // validate id
-        if (invoiceId <= 0) return -1;
-        if (!invoiceRepo.existsById(invoiceId)) return -1; // not found
-
-        // delete from repo
-        invoiceRepo.deleteById(invoiceId);
-
-        // return deleted id
-        return invoiceId;
-    }
 
 
 

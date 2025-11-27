@@ -4,6 +4,7 @@ import com.basssoft.arms.account.domain.AccountDTO;
 import com.basssoft.arms.account.service.IaccountService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.times;
  * @author Matthew Bass
  * @version 4.0
  */
+@Transactional
 public class AccountWebControllerTest {
 
     IaccountService accountService;
@@ -37,15 +39,24 @@ public class AccountWebControllerTest {
     @Test
     void testEditButton() {
 
-        // mock model
-        Model model = new ExtendedModelMap();
+        // mock RedirectAttributes
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+
+        // set up mock behavior for accountService
+        AccountDTO account = new AccountDTO();
+        account.setAccountId(1);
+        when(accountService.getAccount(1)).thenReturn(account);
 
         // call method
-        String view = controller.editButton(1, model);
+        String view = controller.editButton(1, null, redirectAttributes);
 
-        // verify correct view and model attribute
-        assertEquals("ArmsSPA", view);
-        assertEquals(true, model.getAttribute("editMode"));
+        // verify correct redirect
+        assertEquals("redirect:/ArmsSPA/1", view);
+
+        // verify flash attributes set
+        verify(redirectAttributes).addFlashAttribute("account", account);
+        verify(redirectAttributes).addFlashAttribute("accountId", 1);
+        verify(redirectAttributes).addFlashAttribute("editMode", true);
     }
 
 

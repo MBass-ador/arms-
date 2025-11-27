@@ -3,6 +3,7 @@ package com.basssoft.arms.booking.repository;
 import com.basssoft.arms.account.domain.Account;
 import com.basssoft.arms.booking.domain.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -15,10 +16,35 @@ import java.util.List;
  */
 public interface BookingRepository extends JpaRepository<Booking,Integer> {
 
-    // used by Booking Service to retrieve all bookings for a customer
+    /**
+     *  find Bookings by Provider Account ID
+     *
+     * @param accountId int
+     * @return List<Booking>
+     */
     List<Booking> findByCustomer_AccountId(int accountId);
 
-    // used by Invoice Service Factory to generate Invoices
-    // finds unpaid/completed bookings between provider/customer
-    List<Booking> findByProviderAndCustomerAndCompletedTrueAndPaidFalse(Account provider, Account customer);
+
+    /**
+     *  find Bookings by Provider ID, Customer ID, Completed status, and Paid status
+     *
+     * @param providerId int
+     * @param customerId int
+     * @return List<Booking>
+     */
+    List<Booking> findByProvider_AccountIdAndCustomer_AccountIdAndCompletedTrueAndPaidFalse(int providerId, int customerId);
+
+
+
+
+    /**
+     *  find distinct Customer Account IDs by Provider ID, Completed status, and Paid status
+     *
+     * @param providerId int
+     * @return List<Integer>
+     */
+    @Query("select distinct b.customer.accountId from Booking b where b.provider.accountId = :providerId and b.completed = true and b.paid = false")
+    List<Integer> findDistinctCustomer_AccountIdByProvider_AccountIdAndCompletedTrueAndPaidFalse(int providerId);
+
+
 }

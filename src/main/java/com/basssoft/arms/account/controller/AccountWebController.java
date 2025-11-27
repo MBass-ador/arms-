@@ -52,18 +52,18 @@ public class AccountWebController {
      * @return HTML view name
      */
     @GetMapping(value = "/edit/{id}", produces = MediaType.TEXT_HTML_VALUE)
-    public String editButton(@PathVariable int id, Model model) {
+    public String editButton(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
 
         //re-add account and id to model
         AccountDTO account = accountService.getAccount(id);
-        model.addAttribute("account", account);
-        model.addAttribute("accountId", id);
+        redirectAttributes.addFlashAttribute("account", account);
+        redirectAttributes.addFlashAttribute("accountId", id);
 
         // toggle edit mode on
-        model.addAttribute("editMode", true);
+        redirectAttributes.addFlashAttribute("editMode", true);
 
         // reload single page view
-        return VIEW;
+        return "redirect:/ArmsSPA/" + id;
     }
 
 
