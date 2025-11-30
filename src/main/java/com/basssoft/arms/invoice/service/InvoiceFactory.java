@@ -4,6 +4,8 @@ import com.basssoft.arms.booking.domain.Booking;
 import com.basssoft.arms.booking.repository.BookingRepository;
 import com.basssoft.arms.invoice.domain.Invoice;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -25,6 +27,9 @@ import reactor.core.scheduler.Schedulers;
 public class InvoiceFactory {
 
     private final BookingRepository bookingRepo;
+
+    Logger exceptionLogger = LoggerFactory.getLogger("com.basssoft.arms.exception");
+
 
     /**
      * Create Invoice from unpaid Bookings
@@ -56,7 +61,9 @@ public class InvoiceFactory {
             invoice.setTotalAmountDue(totalAmountDue);
             return Mono.just(invoice);
 
-        });
+        })
+        .doOnError(ex -> exceptionLogger.error("Exception in generateInvoice: providerId={}, customerId={}",
+                providerId, customerId, ex));
     }
 
 

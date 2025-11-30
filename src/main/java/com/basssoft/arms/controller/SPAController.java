@@ -74,80 +74,76 @@ public class SPAController {
     @GetMapping(value = "/ArmsSPA/{accountId}", produces = MediaType.TEXT_HTML_VALUE)
     public String armsSpa(@PathVariable int accountId, Model model, @ModelAttribute("providers") Map<Integer, String> providers) {
 
-        try {
-            // get account via service
-            AccountDTO account = accountService.getAccount(accountId);
 
-            if (account != null) {
+        // get account via service
+        AccountDTO account = accountService.getAccount(accountId);
 
-                // add account to model
-                model.addAttribute("account", account);
-                model.addAttribute("accountId", accountId);
+        if (account != null) {
 
-                // load bookings for this account
-                List<BookingDTO> bookings = bookingService.getCustomerBookings(accountId);
+            // add account to model
+            model.addAttribute("account", account);
+            model.addAttribute("accountId", accountId);
 
-                // set provider and customer names for each booking
-                for (BookingDTO booking : bookings) {
-                    booking.setProviderName(providers.get(booking.getProvider()));
-                    booking.setCustomerName(account.getScreenName());
-                }
+            // load bookings for this account
+            List<BookingDTO> bookings = bookingService.getCustomerBookings(accountId);
 
-                // log bookings to troubleshoot
-                System.out.println("Bookings for account " + accountId + ":");
-                for (BookingDTO booking : bookings) {
-                    System.out.println("BookingId: " + booking.getBookingId()
+            // set provider and customer names for each booking
+            for (BookingDTO booking : bookings) {
+                booking.setProviderName(providers.get(booking.getProvider()));
+                booking.setCustomerName(account.getScreenName());
+            }
+
+            // log bookings to troubleshoot
+            System.out.println("Bookings for account " + accountId + ":");
+            for (BookingDTO booking : bookings) {
+                System.out.println("BookingId: " + booking.getBookingId()
                                     + ", Provider: " + booking.getProvider()
                                     + ", Customer: " + booking.getCustomer()
                                     + ", ProviderName: " + booking.getProviderName()
                                     + ", CustomerName: " + booking.getCustomerName()
                                     + ", StartTime: " + booking.getStartTime()
                                     + ", EndTime: " + booking.getEndTime()
-                    );;
-                }
-                model.addAttribute("bookings", bookings);
+                );;
+            }
+            model.addAttribute("bookings", bookings);
 
-                // load invoices for this account
-                List<InvoiceDTO> invoices = invoiceService.getCustomerInvoices(accountId);
+            // load invoices for this account
+            List<InvoiceDTO> invoices = invoiceService.getCustomerInvoices(accountId);
 
-                // log invoices to troubleshoot
-                System.out.println("Invoices for account " + accountId + ":");
-                for (InvoiceDTO invoice : invoices) {
-                    System.out.println("InvoiceId: " + invoice.getInvoiceId()
+            // log invoices to troubleshoot
+            System.out.println("Invoices for account " + accountId + ":");
+            for (InvoiceDTO invoice : invoices) {
+                System.out.println("InvoiceId: " + invoice.getInvoiceId()
                             + ", ProviderId: " + invoice.getProviderId()
                             + ", CustomerId: " + invoice.getCustomerId()
                             + ", BookingIds: " + invoice.getBookingIds()
                             + ", TotalAmountDue: " + invoice.getTotalAmountDue()
                             + ", LastContacted: " + invoice.getLastContacted()
-                    );
-                }
-                // add list of invoices to model
-                model.addAttribute("invoices", invoices);
-
-                // editMode = False (unless set otherwise)
-                if (!model.containsAttribute("editMode")) {
-                    model.addAttribute("editMode", false);
-                }
-                // bookMode = default (unless set otherwise)
-                if (!model.containsAttribute("bookMode")) {
-                    model.addAttribute("bookMode", "default");
-                }
-                // invoiceMode = default (unless set otherwise)
-                if (!model.containsAttribute("invoiceMode")) {
-                    model.addAttribute("invoiceMode", "default");
-                }
-            } else {
-                // still provide the accountId so guarded fragments work; account remains null
-                model.addAttribute("accountId", accountId);
+                );
             }
-            // to SPA view
-            return "ArmsSPA";
+            // add list of invoices to model
+            model.addAttribute("invoices", invoices);
 
-        } catch (Exception ex) {
-            // handle exceptions with model error attribute
-            model.addAttribute("error", "Unable to load account.");
-            return "error";
+            // editMode = False (unless set otherwise)
+            if (!model.containsAttribute("editMode")) {
+                model.addAttribute("editMode", false);
+            }
+            // bookMode = default (unless set otherwise)
+            if (!model.containsAttribute("bookMode")) {
+                model.addAttribute("bookMode", "default");
+            }
+            // invoiceMode = default (unless set otherwise)
+            if (!model.containsAttribute("invoiceMode")) {
+                model.addAttribute("invoiceMode", "default");
+            }
+        } else {
+            // still provide the accountId so guarded fragments work; account remains null
+            model.addAttribute("accountId", accountId);
         }
+        // to SPA view
+        return "ArmsSPA";
+
+
     }
 
 }

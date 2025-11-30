@@ -4,6 +4,7 @@ package com.basssoft.arms.booking.controller;
 import com.basssoft.arms.account.service.IaccountService;
 import com.basssoft.arms.booking.domain.BookingDTO;
 import com.basssoft.arms.booking.service.IbookingService;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -58,42 +59,36 @@ public class BookingWebController {
      * @return HTML view name or redirect
      */
     @PostMapping(value = "/bookings", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = "text/html")
-    public String createBooking(@ModelAttribute("booking") BookingDTO form,
+    public String createBooking(@ModelAttribute("booking") @Valid BookingDTO form,
                                 BindingResult bindingResult,
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
-        try {
-            // validate form input
-            if (bindingResult.hasErrors()) {
-                redirectAttributes.addFlashAttribute("booking", form);
-                redirectAttributes.addFlashAttribute("bookMode", "create");
-                redirectAttributes.addFlashAttribute("accountId", form.getCustomer());
 
-                // back to form
-                return "redirect:/" + VIEW + "/" + form.getCustomer();
-            }
-            // set default values
-            form.setCompleted(false);
-            form.setOverHours(BigDecimal.ZERO);
-            form.setPaid(false);
+        // validate form input
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("booking", form);
+            redirectAttributes.addFlashAttribute("bookMode", "create");
+            redirectAttributes.addFlashAttribute("accountId", form.getCustomer());
 
-            // create booking via service
-            BookingDTO created = bookingService.createBooking(form);
-
-            // add success attributes
-            redirectAttributes.addFlashAttribute("createSuccess", true);
-            redirectAttributes.addFlashAttribute("bookMode", "default");
-            redirectAttributes.addFlashAttribute("accountId", created.getCustomer());
-
-
-            // redirect to list of bookings
-            return "redirect:/" + VIEW + "/" + created.getCustomer();
-
-        } catch (Exception ex) {
-            // handle errors
-            model.addAttribute("error", "Unable to create booking.");
-            return "error";
+            // back to form
+            return "redirect:/" + VIEW + "/" + form.getCustomer();
         }
+        // set default values
+        form.setCompleted(false);
+        form.setOverHours(BigDecimal.ZERO);
+        form.setPaid(false);
+
+        // create booking via service
+        BookingDTO created = bookingService.createBooking(form);
+
+        // add success attributes
+        redirectAttributes.addFlashAttribute("createSuccess", true);
+        redirectAttributes.addFlashAttribute("bookMode", "default");
+        redirectAttributes.addFlashAttribute("accountId", created.getCustomer());
+
+
+        // redirect to list of bookings
+        return "redirect:/" + VIEW + "/" + created.getCustomer();
     }
 
 
@@ -108,33 +103,27 @@ public class BookingWebController {
     @GetMapping(value = "/bookings/view/{id}", produces = "text/html")
     public String viewBooking(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
 
-        try {
-            // get booking via service
-            BookingDTO booking = bookingService.getBooking(id);
 
-            // when found
-            if (booking != null) {
-                // lookup provider name and set it
-                String providerName = accountService.getAccount(booking.getProvider()).getScreenName();
-                booking.setProviderName(providerName);
+        // get booking via service
+        BookingDTO booking = bookingService.getBooking(id);
 
-                // add to model
-                redirectAttributes.addFlashAttribute("selectedBooking", booking);
-                redirectAttributes.addFlashAttribute("accountId", booking.getCustomer());
-                redirectAttributes.addFlashAttribute("bookMode", "view");
+        // when found
+        if (booking != null) {
+            // lookup provider name and set it
+            String providerName = accountService.getAccount(booking.getProvider()).getScreenName();
+            booking.setProviderName(providerName);
 
-                // return to controller
-                return "redirect:/ArmsSPA/" + booking.getCustomer();
+            // add to model
+            redirectAttributes.addFlashAttribute("selectedBooking", booking);
+            redirectAttributes.addFlashAttribute("accountId", booking.getCustomer());
+            redirectAttributes.addFlashAttribute("bookMode", "view");
 
-            } else {
-                // handle not found
-                model.addAttribute("error", "Booking not found.");
-                return "error";
-            }
+            // return to controller
+            return "redirect:/ArmsSPA/" + booking.getCustomer();
 
-        } catch (Exception ex) {
-            // handle errors
-            model.addAttribute("error", "Unable to load booking.");
+        } else {
+            // handle not found
+            model.addAttribute("error", "Booking not found.");
             return "error";
         }
     }
@@ -150,21 +139,14 @@ public class BookingWebController {
     @GetMapping(value = "/bookings", produces = "text/html")
     public String getBookings(int customerId, Model model) {
 
-        try {
-            // get all bookings via service
-            List<BookingDTO> bookings = bookingService.getCustomerBookings(customerId);
+        // get all bookings via service
+        List<BookingDTO> bookings = bookingService.getCustomerBookings(customerId);
 
-            // add to model
-            model.addAttribute("bookings", bookings);
+        // add to model
+        model.addAttribute("bookings", bookings);
 
-            // return to default booking list view
-            return VIEW;
-
-        } catch (Exception ex) {
-            // handle errors
-            model.addAttribute("error", "Unable to load bookings.");
-            return "error";
-        }
+        // return to default booking list view
+        return VIEW;
     }
 
 
@@ -180,54 +162,48 @@ public class BookingWebController {
      */
     @PostMapping(value = "/bookings/update/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = "text/html")
     public String updateBooking(@PathVariable int id,
-                                @ModelAttribute("booking") BookingDTO form,
+                                @ModelAttribute("booking") @Valid BookingDTO form,
                                 BindingResult bindingResult,
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
-        try {
-            // validate form input
-            if (bindingResult.hasErrors()) {
-                redirectAttributes.addFlashAttribute("booking", form);
-                redirectAttributes.addFlashAttribute("bookMode", "edit");
-                redirectAttributes.addFlashAttribute("accountId", form.getCustomer());
 
-                // back to form
-                return "redirect:/" + VIEW + "/" + form.getCustomer();
-            }
+        // validate form input
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("booking", form);
+            redirectAttributes.addFlashAttribute("bookMode", "edit");
+            redirectAttributes.addFlashAttribute("accountId", form.getCustomer());
 
-            // set ID from path variable
-            form.setBookingId(id);
+            // back to form
+            return "redirect:/" + VIEW + "/" + form.getCustomer();
+        }
 
-            // preserve existing values for fields not in the form
-            BookingDTO existing = bookingService.getBooking(id);
-            if (existing != null) {
-                form.setCompleted(existing.isCompleted());
-                form.setOverHours(existing.getOverHours());
-                form.setPaid(existing.isPaid());
-            }
+        // set ID from path variable
+        form.setBookingId(id);
 
-            // update booking via service
-            BookingDTO updated = bookingService.updateBooking(form);
+        // preserve existing values for fields not in the form
+        BookingDTO existing = bookingService.getBooking(id);
+        if (existing != null) {
+            form.setCompleted(existing.isCompleted());
+            form.setOverHours(existing.getOverHours());
+            form.setPaid(existing.isPaid());
+        }
 
-            // handle not found
-            if (updated == null) {
-                model.addAttribute("error", "Booking not found.");
-                return "error";
-            }
+        // update booking via service
+        BookingDTO updated = bookingService.updateBooking(form);
 
-            // add success attributes
-            redirectAttributes.addFlashAttribute("updateSuccess", true);
-            redirectAttributes.addFlashAttribute("bookMode", "default");
-            redirectAttributes.addFlashAttribute("accountId", updated.getCustomer());
-
-            // return to default booking list view
-            return "redirect:/" + VIEW + "/" + updated.getCustomer();
-
-        } catch (Exception ex) {
-            // handle errors
-            model.addAttribute("error", "Unable to update booking.");
+        // handle not found
+        if (updated == null) {
+            model.addAttribute("error", "Booking not found.");
             return "error";
         }
+
+        // add success attributes
+        redirectAttributes.addFlashAttribute("updateSuccess", true);
+        redirectAttributes.addFlashAttribute("bookMode", "default");
+        redirectAttributes.addFlashAttribute("accountId", updated.getCustomer());
+
+        // return to default booking list view
+        return "redirect:/" + VIEW + "/" + updated.getCustomer();
     }
 
 
@@ -243,43 +219,37 @@ public class BookingWebController {
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,produces = "text/html")
     public String deleteBooking(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
 
-        try {
-            // get existing booking to check completed status
-            BookingDTO existing = bookingService.getBooking(id);
-            if (existing == null) {
-                model.addAttribute("error", "Booking not found.");
-                return "error";
-            }
-            // prevent deletion if completed
-            if (existing.isCompleted()) {
-                redirectAttributes.addFlashAttribute("cantDelete", true);
-                redirectAttributes.addFlashAttribute("bookMode", "cantDelete");
-                redirectAttributes.addFlashAttribute("accountId", existing.getCustomer());
-                return "redirect:/" + VIEW + "/" + existing.getCustomer();
-            }
+        // get existing booking to check completed status
+        BookingDTO existing = bookingService.getBooking(id);
+        if (existing == null) {
+            model.addAttribute("error", "Booking not found.");
+            return "error";
+        }
+        // prevent deletion if completed
+        if (existing.isCompleted()) {
+            redirectAttributes.addFlashAttribute("cantDelete", true);
+            redirectAttributes.addFlashAttribute("bookMode", "cantDelete");
+            redirectAttributes.addFlashAttribute("accountId", existing.getCustomer());
+            return "redirect:/" + VIEW + "/" + existing.getCustomer();
+        }
 
-            int accountId = existing.getCustomer();
+        int accountId = existing.getCustomer();
 
-            // delete booking via service
-            int deletedId = bookingService.deleteBooking(id);
+        // delete booking via service
+        int deletedId = bookingService.deleteBooking(id);
 
-            // redirect to bookings list if successful
-            if (deletedId == id) {
-                // set success attributes
-                redirectAttributes.addFlashAttribute("bookMode", "default");
-                redirectAttributes.addFlashAttribute("deleteSuccess", true);
-                redirectAttributes.addFlashAttribute("selectedBooking", null);
+        // redirect to bookings list if successful
+        if (deletedId == id) {
+            // set success attributes
+            redirectAttributes.addFlashAttribute("bookMode", "default");
+            redirectAttributes.addFlashAttribute("deleteSuccess", true);
+            redirectAttributes.addFlashAttribute("selectedBooking", null);
 
-                return "redirect:/" + VIEW + "/" + accountId;
+            return "redirect:/" + VIEW + "/" + accountId;
 
-            } else {
-                // handle not found
-                model.addAttribute("error", "Booking not found.");
-                return "error";
-            }
-        } catch (Exception ex) {
-            // handle errors
-            model.addAttribute("error", "Unable to delete booking.");
+        } else {
+            // handle not found
+            model.addAttribute("error", "Booking not found.");
             return "error";
         }
     }
@@ -342,33 +312,26 @@ public class BookingWebController {
     @GetMapping("/bookings/editMode/{id}")
     public String editMode(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
 
-        try {
-            // get booking via service
-            BookingDTO booking = bookingService.getBooking(id);
+        // get booking via service
+        BookingDTO booking = bookingService.getBooking(id);
 
-            // when found
-            if (booking != null) {
-                // lookup provider name and set it
-                String providerName = accountService.getAccount(booking.getProvider()).getScreenName();
-                booking.setProviderName(providerName);
+        // when found
+        if (booking != null) {
+            // lookup provider name and set it
+            String providerName = accountService.getAccount(booking.getProvider()).getScreenName();
+            booking.setProviderName(providerName);
 
-                // add to model
-                redirectAttributes.addFlashAttribute("selectedBooking", booking);
-                redirectAttributes.addFlashAttribute("accountId", booking.getCustomer());
-                redirectAttributes.addFlashAttribute("bookMode", "edit");
+            // add to model
+            redirectAttributes.addFlashAttribute("selectedBooking", booking);
+            redirectAttributes.addFlashAttribute("accountId", booking.getCustomer());
+            redirectAttributes.addFlashAttribute("bookMode", "edit");
 
-                // return to controller
-                return "redirect:/ArmsSPA/" + booking.getCustomer();
+            // return to controller
+            return "redirect:/ArmsSPA/" + booking.getCustomer();
 
-            } else {
-                // handle not found
-                model.addAttribute("error", "Booking not found.");
-                return "error";
-            }
-
-        } catch (Exception ex) {
-            // handle errors
-            model.addAttribute("error", "Unable to load booking.");
+        } else {
+            // handle not found
+            model.addAttribute("error", "Booking not found.");
             return "error";
         }
     }

@@ -2,6 +2,7 @@ package com.basssoft.arms.account.controller;
 
 import com.basssoft.arms.account.domain.AccountDTO;
 import com.basssoft.arms.account.service.IaccountService;
+import jakarta.validation.Valid;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -78,13 +79,21 @@ public class AccountWebController {
      */
     @PostMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String updateAccount(@PathVariable int id,
-                                @ModelAttribute("account") AccountDTO accountDto,
+                                @ModelAttribute("account") @Valid AccountDTO accountDto,
+                                BindingResult bindingResult,
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
+
+        // check for validation errors
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("account", accountDto);
+            redirectAttributes.addFlashAttribute("editMode", true);
+            redirectAttributes.addFlashAttribute("accountId", id);
+            return "redirect:/" + VIEW + "/" + id;
+        }
+
         // call service to update account
         AccountDTO updatedAccount = accountService.updateAccount(accountDto);
-
-        System.out.println(updatedAccount);
 
         // check for null (indicates failure)
         if (updatedAccount == null  || !updatedAccount.getAccountId().equals(id)) {
@@ -104,6 +113,7 @@ public class AccountWebController {
         // redirect to updated account view
         return "redirect:/" + VIEW + "/" + id;
     }
+
 
 
     /**
@@ -142,25 +152,16 @@ public class AccountWebController {
     @GetMapping(produces = MediaType.TEXT_HTML_VALUE)
     public String getAccountsHtml(Model model) {
 
-        try {
-            // get all accounts via service
-            List<AccountDTO> accounts = accountService.getAllAccounts();
+        // get all accounts via service
+        List<AccountDTO> accounts = accountService.getAllAccounts();
 
 
-            // add to model
-            model.addAttribute("accounts", accounts);
+        // add to model
+        model.addAttribute("accounts", accounts);
 
-            // return view name
-            return VIEW;
-
-        } catch (Exception ex) {
-            // handle exceptions with model error attribute
-            model.addAttribute("error", "Unable to load accounts.");
-            return "error";
-        }
+        // return view name
+        return VIEW;
     }
-
-
 
 
 }

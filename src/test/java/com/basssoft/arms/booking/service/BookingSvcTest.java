@@ -17,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -269,7 +271,7 @@ public class BookingSvcTest {
         int result = service.deleteBooking(bookingId);
         // assert deletion
         assertEquals(bookingId, result);
-        assertNull(service.getBooking(bookingId));
+        assertFalse(repo.findById(bookingId).isPresent());
     }
 
 }

@@ -2,6 +2,10 @@ package com.basssoft.arms.booking.domain;
 
 import com.basssoft.arms.account.domain.Account;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -34,31 +38,45 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "provider_id", nullable = false)
+    @NotNull
     private Account provider;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
+    @NotNull
     private Account customer;
 
     @Column(name = "hourly_rate", nullable = false, precision = 10, scale = 2)
+    @NotNull
+    @DecimalMin(value = "0.01")
     private BigDecimal hourlyRate;
 
     @Column(name = "start_time", nullable = false)
+    @NotNull
     private LocalDateTime startTime;
 
     @Column(name = "end_time", nullable = false)
+    @NotNull
     private LocalDateTime endTime;
 
     @Column(name = "loc_street", nullable = false, length = 40)
+    @NotBlank
+    @Size(max = 50)
     private String locStreet;
 
     @Column(name = "loc_city", nullable = false, length = 20)
+    @NotBlank
+    @Size(max = 24)
     private String locCity;
 
     @Column(name = "loc_state", nullable = false, length = 20)
+    @NotBlank
+    @Size(max = 2)
     private String locState;
 
     @Column(name = "loc_zip_code", nullable = false, length = 10)
+    @NotBlank
+    @Size(max = 10)
     private String locZipCode;
 
     // was service delivered?

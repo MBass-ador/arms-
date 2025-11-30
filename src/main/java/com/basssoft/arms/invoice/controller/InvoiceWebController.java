@@ -47,25 +47,18 @@ public class InvoiceWebController {
     @GetMapping("/invoices/view/{id}")
     public String viewInvoice(@PathVariable("id") int invoiceId, Model model, RedirectAttributes redirectAttributes) {
 
-        try {
-            // get invoice via service
-            InvoiceDTO invoice = invoiceService.getInvoice(invoiceId);
+        // get invoice via service
+        InvoiceDTO invoice = invoiceService.getInvoice(invoiceId);
 
-            // add to model
-            if (invoice != null) {
-                redirectAttributes.addFlashAttribute("selectedInvoice", invoice);
-                redirectAttributes.addFlashAttribute("accountId", invoice.getCustomerId());
-                // set mode to view
-                redirectAttributes.addFlashAttribute("invoiceMode", "view");
-            }
-            // return to view
-            return "redirect:/ArmsSPA/" + invoice.getCustomerId();
-
-        } catch (Exception ex) {
-            // handle errors
-            model.addAttribute("error", "Unable to load invoice.");
-            return "error";
+        // add to model
+        if (invoice != null) {
+            redirectAttributes.addFlashAttribute("selectedInvoice", invoice);
+            redirectAttributes.addFlashAttribute("accountId", invoice.getCustomerId());
+            // set mode to view
+            redirectAttributes.addFlashAttribute("invoiceMode", "view");
         }
+        // return to view
+        return "redirect:/ArmsSPA/" + invoice.getCustomerId();
     }
 
 
@@ -82,23 +75,16 @@ public class InvoiceWebController {
     @GetMapping(value = "/invoices", produces = "text/html")
     public String getCustomerInvoices(@RequestParam int customerId, Model model, RedirectAttributes redirectAttributes) {
 
-        try {
-            // get all invoices via service
-            List<InvoiceDTO> invoices = invoiceService.getCustomerInvoices(customerId);
+        // get all invoices via service
+        List<InvoiceDTO> invoices = invoiceService.getCustomerInvoices(customerId);
 
-            // add to model
-            redirectAttributes.addFlashAttribute("invoices", invoices);
-            redirectAttributes.addFlashAttribute("accountId", customerId);
-            redirectAttributes.addFlashAttribute("invoiceMode", "default");
+        // add to model
+        redirectAttributes.addFlashAttribute("invoices", invoices);
+        redirectAttributes.addFlashAttribute("accountId", customerId);
+        redirectAttributes.addFlashAttribute("invoiceMode", "default");
 
-            // return to view
-            return "redirect:/ArmsSPA/" + customerId;
-
-        } catch (Exception ex) {
-            // handle errors
-            model.addAttribute("error", "Unable to load invoices.");
-            return "error";
-        }
+        // return to view
+        return "redirect:/ArmsSPA/" + customerId;
     }
 
 // Button handler methods

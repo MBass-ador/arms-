@@ -4,10 +4,12 @@ import com.basssoft.arms.account.domain.Account;
 import com.basssoft.arms.account.domain.AccountDTO;
 import com.basssoft.arms.account.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -34,7 +36,7 @@ public class AccountSvcImpl implements IaccountService {
 
         // null check
         if (account == null) {
-            return null;
+            throw new IllegalArgumentException("AccountDTO must not be null");
         }
         // convert dto to account entity
         Account entity = dtoToEntity(account);
@@ -57,8 +59,9 @@ public class AccountSvcImpl implements IaccountService {
         // retrieve account entity
         Optional<Account> opt = repo.findById(accountId);
 
-        // convert to dto and return (or null if not found)
-        return opt.map(this::entityToDto).orElse(null);
+        // convert to dto and return (or exception if not found)
+        return opt.map(this::entityToDto)
+                .orElseThrow(() -> new NoSuchElementException("Account not found for id: " + accountId));
     }
 
 
@@ -69,9 +72,14 @@ public class AccountSvcImpl implements IaccountService {
      * @return AccountDTO
      */
     public AccountDTO getAccountByScreenName(String screenName) {
-        if (screenName == null) return null;
+
+        // null check
+        if (screenName == null) {
+            throw new NoSuchElementException("Screen name must not be null");
+        }
         Optional<Account> opt = repo.findByScreenName(screenName);
-        return opt.map(this::entityToDto).orElse(null);
+        return opt.map(this::entityToDto)
+            .orElseThrow(() -> new NoSuchElementException("Account not found for screen name: " + screenName));
     }
 
 
@@ -105,14 +113,14 @@ public class AccountSvcImpl implements IaccountService {
 
         // null check
         if (account == null || account.getAccountId() == null) {
-            return null;
+            throw new IllegalArgumentException("AccountDTO and accountId must not be null");
         }
         // get existing account from repo (by id)
         Optional<Account> opt = repo.findById(account.getAccountId());
 
         // if not found, return null
         if (!opt.isPresent()) {
-            return null;
+            throw new NoSuchElementException("Account not found for id: " + account.getAccountId());
         }
         // update fields from passed dto
         Account entity = opt.get();
@@ -149,9 +157,9 @@ public class AccountSvcImpl implements IaccountService {
             // return deleted id
             return accountId;
 
-        } catch (org.springframework.dao.EmptyResultDataAccessException ex) {
+        } catch (EmptyResultDataAccessException ex) {
             // no such entity
-            return 0;
+            throw new NoSuchElementException("Account not found for id: " + accountId);
         }
     }
 

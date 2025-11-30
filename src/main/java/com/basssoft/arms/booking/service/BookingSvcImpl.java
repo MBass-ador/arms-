@@ -70,7 +70,7 @@ public class BookingSvcImpl implements IbookingService {
 
         // null check
         if (booking == null) {
-            return null;
+            throw new IllegalArgumentException("BookingDTO must not be null");
         }
         // map DTO to entity
         Booking entity = mapper.map(booking, Booking.class);
@@ -109,7 +109,7 @@ public class BookingSvcImpl implements IbookingService {
         Optional<Booking> opt = repo.findById(bookingId);
         if (opt.isEmpty()) {
             // not found
-            return null;
+            throw new NoSuchElementException("Booking not found for id: " + bookingId);
         }
         Booking saved = opt.get();
         // convert to dto
@@ -151,12 +151,12 @@ public class BookingSvcImpl implements IbookingService {
 
         // null check
         if (booking == null || booking.getBookingId() == null) {
-            return null;
+            throw new IllegalArgumentException("BookingDTO and bookingId must not be null");
         }
         // check exists in repo
         Optional<Booking> opt = repo.findById(booking.getBookingId());
         if (opt.isEmpty()) {
-            return null;
+            throw new NoSuchElementException("Booking not found for id: " + booking.getBookingId());
         }
         // get existing entity
         Booking entity = opt.get();
@@ -204,7 +204,7 @@ public class BookingSvcImpl implements IbookingService {
 
         // if not found, return 0
         if (opt.isEmpty()) {
-            return 0;
+            throw new NoSuchElementException("Booking not found for id: " + bookingId);
         }
         repo.deleteById(bookingId);
 

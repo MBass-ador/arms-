@@ -3,6 +3,9 @@ package com.basssoft.arms.invoice.domain;
 import com.basssoft.arms.account.domain.Account;
 import com.basssoft.arms.booking.domain.Booking;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -34,12 +37,14 @@ public class Invoice {
     @Column(name = "invoice_id", nullable = false)
     private Integer invoiceId;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id", referencedColumnName = "account_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     private Account provider;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", referencedColumnName = "account_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -48,6 +53,7 @@ public class Invoice {
 
     // all unpaid bookings between
     // this provider and this customer
+    @NotEmpty
     @ManyToMany
     @JoinTable(
             name = "invoice_bookings",
@@ -56,6 +62,8 @@ public class Invoice {
     )
     private List<Booking> bookings = new ArrayList<>();
 
+    @NotNull
+    @DecimalMin("0.01")
     @Column(name = "total_amount_due", precision = 20, scale = 2, nullable = false)
     private BigDecimal totalAmountDue = BigDecimal.ZERO;
 

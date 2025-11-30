@@ -54,11 +54,12 @@ public class InvoiceSvcImpl implements IinvoiceService {
         // find by id
         Optional<Invoice> opt = invoiceRepo.findById(invoiceId);
 
-        // convert to dto and return or null if not found
-        if (opt.isPresent()) {
-            return _entityToDto(opt.get());
+        // convert to dto and return or exception if not found
+        if (opt.isEmpty()) {
+            throw new java.util.NoSuchElementException("Invoice not found for id: " + invoiceId);
+
         } else {
-            return null;
+            return _entityToDto(opt.get());
         }
     }
 
@@ -79,20 +80,13 @@ public class InvoiceSvcImpl implements IinvoiceService {
 
 
 
-
-
-
-
-
-
-
     /** helper
      *  converts InvoiceDTO to Invoice entity
      *
      * @param dto InvoiceDTO
      * @return Invoice entity
      */
-    Invoice _dtoToEntity(InvoiceDTO dto) {
+    public Invoice _dtoToEntity(InvoiceDTO dto) {
         // null check
         if (dto == null) return null;
 
@@ -122,7 +116,7 @@ public class InvoiceSvcImpl implements IinvoiceService {
      * @param entity Invoice entity
      * @return InvoiceDTO
      */
-    InvoiceDTO _entityToDto(Invoice entity) {
+    public InvoiceDTO _entityToDto(Invoice entity) {
 
         // null check
         if (entity == null) return null;

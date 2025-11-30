@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -83,14 +84,45 @@ public class AccountWebControllerTest {
         // mock RedirectAttributes
         RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
 
+        // mock BindingResult with no errors
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+
         // call method
-        String result = controller.updateAccount(accountId, inputDto, model, redirectAttributes);
+        String result = controller.updateAccount(accountId, inputDto, bindingResult, model, redirectAttributes);
 
         // verify correct redirect, editMode setting, and service call
         assertEquals("redirect:/ArmsSPA/1", result);
         assertEquals(false, model.getAttribute("editMode"));
         verify(accountService, times(1)).updateAccount(inputDto);
     }
+
+
+
+    /**
+     * tests updateAccount() method with validation errors
+     */
+    @Test
+    void testUpdateAccount_Invalid() {
+        int accountId = 1;
+        AccountDTO inputDto = new AccountDTO();
+        inputDto.setAccountId(accountId);
+
+        Model model = new ExtendedModelMap();
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String result = controller.updateAccount(accountId, inputDto, bindingResult, model, redirectAttributes);
+
+        assertEquals("redirect:/ArmsSPA/1", result);
+        verify(redirectAttributes).addFlashAttribute("account", inputDto);
+        verify(redirectAttributes).addFlashAttribute("editMode", true);
+        verify(redirectAttributes).addFlashAttribute("accountId", accountId);
+        verify(accountService, never()).updateAccount(any());
+    }
+
+
 
 
 

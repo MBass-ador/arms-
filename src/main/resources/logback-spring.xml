@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- each service logs to its own file
+ *
+ *  Arms Application
+ *  @Version 6.0
+ *  @Author Matthew Bass -->
+<configuration>
+
+    <property name="LOG_HOME" value="logs"/>
+
+    <!-- transaction log appender -->
+    <appender name="TRANSACTION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/transaction.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/transaction.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- access log appender -->
+    <appender name="ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/access.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/access.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>100</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- exception log appender -->
+    <appender name="EXCEPTION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/exception.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/exception.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- loggers -->
+    <logger name="com.basssoft.arms.transaction" level="INFO" additivity="false">
+        <appender-ref ref="TRANSACTION"/>
+    </logger>
+    <logger name="com.basssoft.arms.access" level="INFO" additivity="false">
+        <appender-ref ref="ACCESS"/>
+    </logger>
+    <logger name="com.basssoft.arms.exception" level="ERROR" additivity="false">
+        <appender-ref ref="EXCEPTION"/>
+    </logger>
+
+    <!-- root logger (log everything else to console) -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+</configuration>
