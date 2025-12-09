@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,11 @@ public class AccountDTO {
     @Size(min = 6, max = 50)
     @JsonIgnore
     private String password;
+
+    // only used for password confirmation, not persisted
+    @Size(min = 6, max = 50)
+    @Transient
+    private String confirmPassword;
 
     @NotNull
     private boolean provider;

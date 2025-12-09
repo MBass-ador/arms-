@@ -28,7 +28,7 @@ public class ServiceLoggingAspect {
     // get SLF4J loggers
     private static final Logger transactionLogger = LoggerFactory.getLogger("com.basssoft.arms.transaction");
     private static final Logger accessLogger = LoggerFactory.getLogger("com.basssoft.arms.access");
-    private static final Logger aspectLogger = LoggerFactory.getLogger("com.basssoft.arms.aspect");
+    private static final Logger securityLogger = LoggerFactory.getLogger("com.basssoft.arms.security");
 
     // Jackson ObjectMapper for JSON serialization (with JavaTimeModule conversion)
     private static final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -241,6 +241,35 @@ public class ServiceLoggingAspect {
                     .subscribe();
         }
     }
+
+
+
+    /** \@AfterReturning advice
+     *  logs all public service layer methods in security service package
+     *  logs: method name, arguments, and timestamp to security log
+
+     * @param joinPoint JoinPoint
+     * @param result Object result
+     */
+    @AfterReturning(
+            pointcut = "execution(public * com.basssoft.arms.security.service.*.*(..))",
+            returning = "result"
+    )
+    public void logSecurityServiceEvent(JoinPoint joinPoint, Object result) {
+        String method = joinPoint.getSignature().toShortString();
+        Object[] args = joinPoint.getArgs();
+        String timestamp = java.time.Instant.now().toString();
+        securityLogger.info("SecurityService: {} called at {} with args={}", method, timestamp, args);
+    }
+
+
+
+
+
+
+
+
+
 
 
 }

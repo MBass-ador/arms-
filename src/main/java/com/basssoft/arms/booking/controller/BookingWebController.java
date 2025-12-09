@@ -6,6 +6,7 @@ import com.basssoft.arms.booking.domain.BookingDTO;
 import com.basssoft.arms.booking.service.IbookingService;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -58,6 +59,7 @@ public class BookingWebController {
      * @param redirectAttributes RedirectAttributes
      * @return HTML view name or redirect
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping(value = "/bookings", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = "text/html")
     public String createBooking(@ModelAttribute("booking") @Valid BookingDTO form,
                                 BindingResult bindingResult,
@@ -100,6 +102,7 @@ public class BookingWebController {
      * @param redirectAttributes RedirectAttributes
      * @return HTML view name
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping(value = "/bookings/view/{id}", produces = "text/html")
     public String viewBooking(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
 
@@ -136,6 +139,7 @@ public class BookingWebController {
      * @param model Model
      * @return HTML view name
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping(value = "/bookings", produces = "text/html")
     public String getBookings(int customerId, Model model) {
 
@@ -160,6 +164,7 @@ public class BookingWebController {
      * @param redirectAttributes RedirectAttributes
      * @return HTML view name or redirect
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping(value = "/bookings/update/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = "text/html")
     public String updateBooking(@PathVariable int id,
                                 @ModelAttribute("booking") @Valid BookingDTO form,
@@ -215,6 +220,7 @@ public class BookingWebController {
      * @param redirectAttributes RedirectAttributes
      * @return HTML view name or redirect
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping( value= "/bookings/delete/{id}",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,produces = "text/html")
     public String deleteBooking(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
@@ -265,6 +271,7 @@ public class BookingWebController {
      * @param redirectAttributes RedirectAttributes
      * @return redirect to ArmsSPA controller
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/bookings/cancel/{id}")
     public String cancelButton(@PathVariable("id") int accountId, Model model, RedirectAttributes redirectAttributes) {
 
@@ -287,6 +294,7 @@ public class BookingWebController {
      * @param redirectAttributes RedirectAttributes
      * @return redirect to ArmsSPA controller
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/bookings/createMode/{accountId}")
     public String createMode(@PathVariable int accountId, RedirectAttributes redirectAttributes) {
 
@@ -309,6 +317,7 @@ public class BookingWebController {
      * @param redirectAttributes RedirectAttributes
      * @return redirect to ArmsSPA controller
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/bookings/editMode/{id}")
     public String editMode(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
 

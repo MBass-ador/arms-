@@ -185,3 +185,7 @@ input, select, textarea, span {
     font-size: 1.25rem;
     font-family: Arial, sans-serif;
 }
+
+.authPage {
+    background: #d0e8ff; /* light blue */
+}

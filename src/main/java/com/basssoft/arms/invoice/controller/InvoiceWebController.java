@@ -3,6 +3,7 @@ package com.basssoft.arms.invoice.controller;
 
 import com.basssoft.arms.invoice.domain.InvoiceDTO;
 import com.basssoft.arms.invoice.service.IinvoiceService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +45,7 @@ public class InvoiceWebController {
      * @param redirectAttributes RedirectAttributes
      * @return Thymeleaf fragment name
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/invoices/view/{id}")
     public String viewInvoice(@PathVariable("id") int invoiceId, Model model, RedirectAttributes redirectAttributes) {
 
@@ -72,6 +74,7 @@ public class InvoiceWebController {
    *
      * @return Thymeleaf fragment name
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping(value = "/invoices", produces = "text/html")
     public String getCustomerInvoices(@RequestParam int customerId, Model model, RedirectAttributes redirectAttributes) {
 
@@ -99,6 +102,7 @@ public class InvoiceWebController {
      *
      * @return Thymeleaf fragment name
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/invoices/cancel/{id}")
     public String cancelInvoice(@PathVariable("id") int accountId, Model model, RedirectAttributes redirectAttributes) {
 
@@ -122,6 +126,7 @@ public class InvoiceWebController {
      * @param redirectAttributes RedirectAttributes
      * @return Thymeleaf fragment name
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/invoices/pay/{id}")
     public String payInvoice(@PathVariable("id") int accountId, Model model, RedirectAttributes redirectAttributes) {
 
@@ -144,6 +149,7 @@ public class InvoiceWebController {
      *
      * @return Thymeleaf fragment name
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/invoices/message/{id}")
     public String messageInvoice(@PathVariable("id") int accountId, Model model, RedirectAttributes redirectAttributes) {
 

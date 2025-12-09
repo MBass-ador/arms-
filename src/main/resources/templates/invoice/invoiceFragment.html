@@ -13,24 +13,24 @@ Author: Matthew Bass
 
     <!-- pick content based on invoiceMode -->
     <th:block th:if="${invoiceMode eq 'default'}">
-        <div class="content" th:replace="~{InvoiceContentFragment :: content(invoices=${invoices})}"></div>
+        <div class="content" th:replace="~{invoice/InvoiceContentFragment :: content(invoices=${invoices})}"></div>
     </th:block>
 
     <th:block th:if="${invoiceMode eq 'pay'}">
-        <div class="content" th:replace="~{InvoicePayStubFragment :: payStub}"></div>
+        <div class="content" th:replace="~{invoice/InvoicePayStubFragment :: payStub}"></div>
     </th:block>
 
     <th:block th:if="${invoiceMode eq 'message'}">
-        <div class="content" th:replace="~{InvoiceEmailStubFragment :: emailStub}"></div>
+        <div class="content" th:replace="~{invoice/InvoiceEmailStubFragment :: emailStub}"></div>
     </th:block>
 
     <th:block th:if="${invoiceMode eq 'view'}">
-        <div class="content" th:replace="~{InvoiceDisplayFragment :: display(invoice=${selectedInvoice})}"></div>
+        <div class="content" th:replace="~{invoice/InvoiceDisplayFragment :: display(invoice=${selectedInvoice})}"></div>
     </th:block>
 
 
     <!-- always show buttons  -->
-    <div class="buttons" th:replace="~{InvoiceButtonsFragment
+    <div class="buttons" th:replace="~{invoice/InvoiceButtonsFragment
                     :: buttons(accountId=${accountId}, invoiceMode=${invoiceMode})}"></div>
 
 </section>

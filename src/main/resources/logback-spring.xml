@@ -45,6 +45,15 @@
         </encoder>
     </appender>
 
+    <!-- auth log appender -->
+    <appender name="AUTH" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_HOME}/auth.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
 
     <!-- loggers -->
     <logger name="com.basssoft.arms.transaction" level="INFO" additivity="false">
@@ -55,6 +64,9 @@
     </logger>
     <logger name="com.basssoft.arms.exception" level="ERROR" additivity="false">
         <appender-ref ref="EXCEPTION"/>
+    </logger>
+    <logger name="com.basssoft.arms.security" level="INFO" additivity="false">
+        <appender-ref ref="AUTH"/>
     </logger>
 
     <!-- root logger (log everything else to console) -->

@@ -1,8 +1,12 @@
 package com.basssoft.arms.aspect;
 
+import com.basssoft.arms.security.exception.InvalidRefreshTokenException;
+import com.basssoft.arms.security.exception.UserNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -49,6 +53,18 @@ public class ControllerExceptionAspect {
         } else if (ex instanceof MethodArgumentTypeMismatchException) {
             message = "Invalid path or parameter type: " + ex.getMessage();
             exceptionLogger.error("MethodArgumentTypeMismatchException: {}", ex.getMessage());
+
+        } else if (ex instanceof InvalidRefreshTokenException) {
+            message = "Invalid refresh token: " + ex.getMessage();
+            exceptionLogger.error("InvalidRefreshTokenException: {}", ex.getMessage(), ex);
+
+        } else if (ex instanceof UserNotFoundException) {
+            message = "User not found: " + ex.getMessage();
+            exceptionLogger.error("UserNotFoundException: {}", ex.getMessage(), ex);
+
+        } else if (ex instanceof ConstraintViolationException) {
+            message = "Validation failed: One or more fields did not meet requirements. Please check your input.";
+            exceptionLogger.error("ConstraintViolationException: {}", ex.getMessage(), ex);
 
         } else {
             message = "An unexpected error occurred.";

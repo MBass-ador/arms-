@@ -5,6 +5,7 @@ import com.basssoft.arms.account.service.IaccountService;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -52,6 +53,7 @@ public class AccountWebController {
      * @param model Model
      * @return HTML view name
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping(value = "/edit/{id}", produces = MediaType.TEXT_HTML_VALUE)
     public String editButton(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
 
@@ -77,6 +79,7 @@ public class AccountWebController {
      * @param model      Model from Spring MVC view
      * @return redirect to account view or error view
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping(value = "/update/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public String updateAccount(@PathVariable int id,
                                 @ModelAttribute("account") @Valid AccountDTO accountDto,
@@ -84,12 +87,29 @@ public class AccountWebController {
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
 
+
+        // check password confirmation
+        if (accountDto.getPassword() != null && !accountDto.getPassword().isEmpty()) {
+            if (!accountDto.getPassword().equals(accountDto.getConfirmPassword())) {
+                bindingResult.rejectValue("confirmPassword", "error.confirmPassword", "Passwords do not match.");
+            }
+        }
+
         // check for validation errors
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("account", accountDto);
             redirectAttributes.addFlashAttribute("editMode", true);
             redirectAttributes.addFlashAttribute("accountId", id);
             return "redirect:/" + VIEW + "/" + id;
+        }
+
+        // get existing account to preserve unchanged password field
+        AccountDTO existing = accountService.getAccount(id);
+
+        // only update the password when new one is provided
+        if (accountDto.getPassword() == null || accountDto.getPassword().isBlank()) {
+            accountDto.setPassword(existing.getPassword());
+            accountDto.setConfirmPassword(existing.getPassword());
         }
 
         // call service to update account
@@ -124,6 +144,7 @@ public class AccountWebController {
      * @param model Model
      * @return HTML view name
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping(value = "/cancel/{id}", produces = MediaType.TEXT_HTML_VALUE)
     public String cancelButton(@PathVariable int id, Model model) {
 
@@ -149,6 +170,7 @@ public class AccountWebController {
      * @param model Model
      * @return HTML view name
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping(produces = MediaType.TEXT_HTML_VALUE)
     public String getAccountsHtml(Model model) {
 

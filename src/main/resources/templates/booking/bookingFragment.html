@@ -12,18 +12,18 @@ Author: Matthew Bass
 
     <!-- show booking list in default mode -->
     <th:block th:if="${bookMode} == 'default'">
-        <div class="content" th:replace="BookingContentFragment :: content(bookings=${bookings})"></div>
+        <div class="content" th:replace="booking/BookingContentFragment :: content(bookings=${bookings})"></div>
     </th:block>
 
 
     <!-- show booking form in create/view/edit/delete modes -->
     <th:block th:if="${bookMode} != 'default'">
         <div class="content"
-             th:replace="BookingFormFragment :: form(accountId=${accountId}, bookMode=${bookMode}, booking=${selectedBooking})"></div>
+             th:replace="booking/BookingFormFragment :: form(accountId=${accountId}, bookMode=${bookMode}, booking=${selectedBooking})"></div>
     </th:block>
 
     <!-- always show booking buttons -->
-    <div class="buttons" th:replace="BookingButtonsFragment :: buttons(customerId=${accountId}, bookMode=${bookMode})"></div>
+    <div class="buttons" th:replace="booking/BookingButtonsFragment :: buttons(customerId=${accountId}, bookMode=${bookMode})"></div>
 
 </section>
 

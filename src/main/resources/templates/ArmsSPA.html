@@ -32,7 +32,7 @@ Author: Matthew Bass
 
         <!-- include accountFragment only when account model exists -->
         <div id="accountContentGood" th:if="${account != null}
-            " th:replace="accountFragment :: account(accountId=${accountId}, account=${account})"></div>
+            " th:replace="account/accountFragment :: account(accountId=${accountId})"></div>
 
         <!-- empty fallback when no account (prevents fragment parsing errors) -->
         <div id="accountContentBad" th:if="${account == null}"></div>
@@ -44,7 +44,7 @@ Author: Matthew Bass
 
         <!-- include bookingFragment only with accountId -->
         <div id="bookingContentGood" th:if="${accountId != null}"
-             th:replace="bookingFragment :: bookings(accountId=${accountId}, bookings=${bookings},
+             th:replace="booking/bookingFragment :: bookings(accountId=${accountId}, bookings=${bookings},
                                                      bookMode=${bookMode}, selectedBooking=${selectedBooking})"></div>
 
         <!-- empty fallback when no accountId (prevents fragment parsing errors) -->
@@ -58,7 +58,7 @@ Author: Matthew Bass
 
         <!-- include invoiceFragment only when we have an accountId (pass parameters to match fragment signature) -->
         <div id="invoiceContentGood" th:if="${accountId != null}"
-             th:replace="invoiceFragment
+             th:replace="invoice/invoiceFragment
                    :: invoices(accountId=${accountId}, invoices=${invoices},
                       selectedInvoice=${selectedInvoice}, invoiceMode=${invoiceMode})"></div>
 

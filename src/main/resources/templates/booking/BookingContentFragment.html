@@ -13,7 +13,7 @@ Author: Matthew Bass
     <div class="list-group" style="max-height: 400px; overflow-y: auto;">
 
     <div th:each="booking : ${bookings}">
-        <section th:replace="~{BookingListItemFragment :: listItem(booking=${booking})}"></section>
+        <section th:replace="~{booking/BookingListItemFragment :: listItem(booking=${booking})}"></section>
     </div>
 </div>
 

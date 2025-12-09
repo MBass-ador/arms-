@@ -68,33 +68,32 @@ public class AccountWebControllerTest {
     @Test
     void testUpdateAccount() {
 
-        // set up mock data
-        int accountId = 1;
-        AccountDTO inputDto = new AccountDTO();
-        inputDto.setAccountId(accountId);
-        AccountDTO updatedDto = new AccountDTO();
-        updatedDto.setAccountId(accountId);
+        // Arrange
+        AccountDTO form = new AccountDTO();
+        form.setAccountId(1);
+        form.setPassword(""); // Simulate no new password provided
+        form.setConfirmPassword(""); // Simulate no new password provided
 
-        // set up mock behavior
-        when(accountService.updateAccount(inputDto)).thenReturn(updatedDto);
+        AccountDTO existing = new AccountDTO();
+        existing.setAccountId(1);
+        existing.setPassword("existingPasswordHash");
 
-        // mock model
+        when(accountService.getAccount(1)).thenReturn(existing);
+        when(accountService.updateAccount(any(AccountDTO.class))).thenReturn(existing);
+
         Model model = new ExtendedModelMap();
-
-        // mock RedirectAttributes
         RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
 
-        // mock BindingResult with no errors
-        BindingResult bindingResult = mock(BindingResult.class);
-        when(bindingResult.hasErrors()).thenReturn(false);
+        // Act
+        AccountWebController controller = new AccountWebController(accountService);
+        String view = controller.updateAccount(1, form, mock(BindingResult.class), model, redirectAttributes);
 
-        // call method
-        String result = controller.updateAccount(accountId, inputDto, bindingResult, model, redirectAttributes);
-
-        // verify correct redirect, editMode setting, and service call
-        assertEquals("redirect:/ArmsSPA/1", result);
-        assertEquals(false, model.getAttribute("editMode"));
-        verify(accountService, times(1)).updateAccount(inputDto);
+        // Assert
+        assertEquals("redirect:/ArmsSPA/1", view);
+        verify(accountService, times(1)).updateAccount(argThat(updated ->
+                updated.getPassword().equals("existingPasswordHash") &&
+                        updated.getConfirmPassword().equals("existingPasswordHash")
+        ));
     }
 
 

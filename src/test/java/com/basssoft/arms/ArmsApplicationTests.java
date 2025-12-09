@@ -3,6 +3,7 @@ package com.basssoft.arms;
 import com.basssoft.arms.account.AllAccountTests;
 import com.basssoft.arms.booking.AllBookingTests;
 import com.basssoft.arms.invoice.AllInvoiceTests;
+import com.basssoft.arms.security.AllSecurityTests;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
@@ -18,7 +19,8 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
         AllBookingTests.class,
         AllAccountTests.class,
-        AllInvoiceTests.class
+        AllInvoiceTests.class,
+        AllSecurityTests.class
 })
 class ArmsApplicationTests {
 

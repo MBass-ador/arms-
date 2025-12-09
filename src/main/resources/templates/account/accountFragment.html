@@ -10,10 +10,10 @@ Author: Matthew Bass
 
 <section th:fragment="account(accountId)" class="container">
 
-    <div class="content" th:replace="AccountContentFragment :: content(account=${account})">
+    <div class="content" th:replace="account/AccountContentFragment :: content">
     </div>
 
-    <div class="buttons" th:replace="AccountButtonsFragment :: buttons(accountId=${accountId})">
+    <div class="buttons" th:replace="account/AccountButtonsFragment :: buttons(accountId=${accountId})">
     </div>
 
 </section>

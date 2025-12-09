@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!--
+    login page for @RMS application
+
+parent: none
+children: none
+
+ Project: @RMS
+ Author: Matthew Bass
+ Version 7.0
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>@rms Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/Arms.css" th:href="@{/Arms.css}" rel="stylesheet">
+</head>
+
+<body>
+    <main class="container authPage py-4" role="main">
+
+        <div id="loginDiv" class="service mb-3" aria-labelledby="login-heading" style="max-width: 400px; margin: 2rem auto;">
+
+            <h2 id="login-heading" class="mb-4 text-center">Login</h2>
+            <form th:action="@{/auth/login}" method="post" autocomplete="off">
+
+                <div class="field mb-3">
+                    <label for="screenName">Screen Name</label>
+                    <input id="screenName" name="screenName" type="text" class="form-control" placeholder="Enter screen name" required autofocus>
+                </div>
+
+                <div class="field mb-4">
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" class="form-control" placeholder="Enter password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mb-2">Login</button>
+
+            </form>
+
+            <div class="text-center mt-3">
+                <a th:href="@{/auth/register}">Don't have an account? Register</a>
+            </div>
+
+            <!-- display account creation success message
+                 after successful redirect from registration -->
+            <div th:if="${message}" class="success-message" th:text="${message}"></div>
+
+        </div>
+
+    </main>
+</body>
+
+</html>

@@ -14,7 +14,7 @@ Author: Matthew Bass
 
         <div th:each="invoice : ${invoices}">
 
-            <section th:replace="~{InvoiceListItemFragment :: listItem(invoice=${invoice})}"></section>
+            <section th:replace="~{invoice/InvoiceListItemFragment :: listItem(invoice=${invoice})}"></section>
 
         </div>
 

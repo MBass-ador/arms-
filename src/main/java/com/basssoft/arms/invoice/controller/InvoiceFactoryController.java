@@ -5,6 +5,7 @@ import com.basssoft.arms.invoice.domain.Invoice;
 import com.basssoft.arms.invoice.service.InvoiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +40,7 @@ public class InvoiceFactoryController {
      * @param customerId int
      * @return Mono<Invoice>
      */
+    @PreAuthorize("hasRole('PROVIDER')")
     @GetMapping("/generate")
     public Mono<ResponseEntity<Invoice>> generateInvoice(@RequestParam int providerId, @RequestParam int customerId) {
 
@@ -57,6 +59,7 @@ public class InvoiceFactoryController {
      * @param providerId int
      * @return Flux<Invoice>
      */
+    @PreAuthorize("hasRole('PROVIDER')")
     @GetMapping("/generate-all")
     public Flux<Invoice> generateAllProviderInvoices(@RequestParam int providerId) {
 

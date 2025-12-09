@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!--
+    registration page for @RMS application
+
+parent: none
+children: none
+
+ Project: @RMS
+ Author: Matthew Bass
+ Version 7.0
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link href="/Arms.css" th:href="@{/Arms.css}" rel="stylesheet">
+</head>
+
+<body>
+    <main class="container authPage" id="registerDiv">
+        <h2>Register</h2>
+
+        <div th:replace="account/AccountContentFragment :: content"
+             th:with="accountId=${null}">
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary"
+                th:attr="form='accountForm'"
+                th:formaction="@{/auth/register}"
+                th:formmethod="post">
+            Register
+        </button>
+
+    </main>
+</body>
+
+</html>

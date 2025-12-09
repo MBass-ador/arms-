@@ -7,6 +7,7 @@ import com.basssoft.arms.booking.service.IbookingService;
 import com.basssoft.arms.invoice.domain.InvoiceDTO;
 import com.basssoft.arms.invoice.service.IinvoiceService;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -71,8 +72,10 @@ public class SPAController {
      *
      * @return String the name of the SPA view
      */
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping(value = "/ArmsSPA/{accountId}", produces = MediaType.TEXT_HTML_VALUE)
-    public String armsSpa(@PathVariable int accountId, Model model, @ModelAttribute("providers") Map<Integer, String> providers) {
+    public String armsSpa(@PathVariable int accountId, Model model,
+                          @ModelAttribute("providers") Map<Integer, String> providers) {
 
 
         // get account via service

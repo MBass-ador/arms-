@@ -1,0 +1,99 @@
+<!--
+template fragment for ARMS application
+
+parent: accountFragment
+children: none
+
+version 4.0
+Author: Matthew Bass
+-->
+
+<!--/*@thymesVar id="account" type="com.basssoft.arms.account.domain.AccountDTO" */-->
+<section xmlns:th="http://www.thymeleaf.org" th:fragment="content" class="content">
+
+    <form id="accountForm"
+            th:action="${#strings.isEmpty(accountId)} ? @{/auth/register} : @{/accounts/update/{id}(id=${accountId})}"
+            th:method="post"
+            th:object="${account}">
+
+        <input type="hidden" th:field="*{accountId}" />
+
+        <fieldset th:classappend="${!editMode} ? 'readonly'" th:attr="disabled=${!editMode}">
+
+            <div class="field">
+                <label for="screenName">screenName</label>
+                <input th:field="*{screenName}" id="screenName" name="screenName" placeholder="screen name"
+                       th:disabled="${!#strings.isEmpty(accountId)}"/>
+                <div th:if="${#fields.hasErrors('screenName')}" th:errors="*{screenName}" class="error-message"></div>
+            </div>
+
+            <div class="field">
+                <label for="password">password</label>
+                <input th:field="*{password}" id="password" name="password" type="password"
+                       th:disabled="${!#strings.isEmpty(accountId)}"/>
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></div>
+            </div>
+
+            <div class="field">
+                <label for="confirmPassword">confirm password</label>
+                <input th:field="*{confirmPassword}" id="confirmPassword" name="confirmPassword"
+                                                     type="password"  required
+                       th:disabled="${!#strings.isEmpty(accountId)}"/>
+                <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
+                                                     class="error-message"></div>
+            </div>
+
+            <div class="field">
+                <label for="firstName">firstName</label>
+                <input th:field="*{firstName}" id="firstName" name="firstName" placeholder="first name"/>
+                <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="error-message"></div>
+            </div>
+
+            <div class="field">
+                <label for="lastName">lastName</label>
+                <input th:field="*{lastName}" id="lastName" name="lastName" placeholder="last name"/>
+                <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="error-message"></div>
+            </div>
+
+            <div class="field">
+                <label for="phoneNumber">phone</label>
+                <input th:field="*{phoneNumber}" id="phoneNumber" name="phoneNumber" type="tel" placeholder="phone"/>
+                <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="error-message"></div>
+            </div>
+
+            <div class="field">
+                <label for="email">email</label>
+                <input th:field="*{email}" id="email" name="email" type="email" placeholder="email"/>
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></div>
+            </div>
+
+            <div class="field">
+                <label for="street">street</label>
+                <input th:field="*{street}" id="street" name="street" placeholder="street"/>
+                <div th:if="${#fields.hasErrors('street')}" th:errors="*{street}" class="error-message"></div>
+            </div>
+
+            <div class="field">
+                <label for="city">city</label>
+                <input th:field="*{city}" id="city" name="city" placeholder="city"/>
+                <div th:if="${#fields.hasErrors('city')}" th:errors="*{city}" class="error-message"></div>
+            </div>
+
+            <div class="field">
+                <label for="state">state</label>
+                <input th:field="*{state}" id="state" name="state" placeholder="state"/>
+                <div th:if="${#fields.hasErrors('state')}" th:errors="*{state}" class="error-message"></div>
+            </div>
+
+            <div class="field">
+                <label for="zipCode">zip</label>
+                <input th:field="*{zipCode}" id="zipCode" name="zipCode" placeholder="zip"/>
+                <div th:if="${#fields.hasErrors('zipCode')}" th:errors="*{zipCode}" class="error-message"></div>
+            </div>
+
+        </fieldset>
+
+    </form>
+
+</section>
+

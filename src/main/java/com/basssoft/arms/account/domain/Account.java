@@ -37,10 +37,10 @@ public class Account {
     private String screenName;
 
     @NotBlank
-    @Size(min = 6, max = 50)
+    @Size(min = 6, max = 60)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ToString.Exclude
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 60)
     private String password;
 
     @Column(nullable = false)
